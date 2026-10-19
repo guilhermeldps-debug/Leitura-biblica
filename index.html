@@ -141,6 +141,7 @@ header { display: grid; gap: 6px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .75rem; color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend i { width: 14px; height: 4px; border-radius: 2px; background: var(--kc); }
+.order { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); font-weight: 600; }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -202,6 +203,14 @@ header { display: grid; gap: 6px; }
     <button role="tab" id="tabNT" aria-selected="false" type="button">Novo Testamento</button>
     <button role="tab" id="tabNotes" aria-selected="false" type="button">Anotações</button>
   </nav>
+  <div class="order" id="orderBar">
+    <span>Ordem dos livros</span>
+    <div class="mode" role="group" aria-label="Ordem dos livros">
+      <button type="button" id="ordBible" aria-pressed="true">Bíblica</button>
+      <button type="button" id="ordChrono" aria-pressed="false">Cronológica</button>
+    </div>
+  </div>
+  <p class="hint" id="orderNote" hidden>Ordem cronológica aproximada, pela época dos acontecimentos e da escrita. As datas de alguns livros são debatidas. O botão "Próximo capítulo" passa a seguir esta ordem.</p>
   <div id="books" style="display:grid;gap:8px"></div>
   <section class="backup">
     <h3>Backup</h3>
@@ -321,8 +330,19 @@ function markAll(id){
 }
 function clearBook(id){ delete state.read[id]; persist(); render(); }
 
+const CHRONO = {
+  AT: [["Origens e patriarcas", ["gn","jo"]], ["Êxodo e deserto", ["ex","lv","nm","dt"]], ["Conquista e juízes", ["js","jz","rt"]],
+       ["Reino unido", ["1sm","sl","2sm","1cr","1rs","2cr","pv","ec","ct"]],
+       ["Reino dividido e profetas", ["2rs","jl","jn","is","os","mq","am","na","jr","sf","hc","lm","ob"]],
+       ["Exílio na Babilônia", ["dn","ez"]], ["Retorno e restauração", ["ed","et","ag","ne","ml","zc"]]],
+  NT: [["Vida de Jesus", ["mt","mc","lc","joa"]], ["Igreja primitiva", ["at"]], ["Viagens missionárias", ["tg","gl","1ts","2ts","1co","2co","rm"]],
+       ["Cartas da prisão", ["ef","fp","cl","fm"]], ["Últimas cartas", ["hb","1pe","1tm","tt","2tm","jd","2pe","1jo","2jo","3jo"]], ["Revelação", ["ap"]]]
+};
+let order = "bible"; try { if (localStorage.getItem("leitura-biblica-ordem") === "chrono") order = "chrono"; } catch(e) {}
+const sections = t => order === "chrono" ? CHRONO[t] : GROUPS.filter(g => g[0] === t).map(([, g, bs]) => [g, bs.map(x => x[0])]);
+const orderedBooks = () => order === "chrono" ? ["AT","NT"].flatMap(t => CHRONO[t].flatMap(x => x[1])).map(id => BY[id]) : BOOKS;
 function nextChapter(){
-  for (const b of BOOKS) { const s = readSet(b.id); if (s.size < b.ch) for (let c = 1; c <= b.ch; c++) if (!s.has(c)) return [b, c]; }
+  for (const b of orderedBooks()) { const s = readSet(b.id); if (s.size < b.ch) for (let c = 1; c <= b.ch; c++) if (!s.has(c)) return [b, c]; }
   return null;
 }
 function streak(){
@@ -368,11 +388,10 @@ function render(){
   // livros
   const box = document.getElementById("books"); box.innerHTML = "";
   if (tab === "NOTAS") renderAllNotes(box);
-  else for (const [t, g, bs] of GROUPS) {
-    if (t !== tab) continue;
+  else for (const [g, ids] of sections(tab)) {
     const sec = document.createElement("div"); sec.className = "section";
     const h = document.createElement("h3"); h.textContent = g; sec.appendChild(h);
-    for (const [id] of bs) {
+    for (const id of ids) {
       const b = BY[id], c = countBook(id), btn = document.createElement("button");
       btn.type = "button"; btn.className = "book" + (c === b.ch ? " complete" : "");
       btn.innerHTML = `<span class="ab"></span><span class="nm"><span></span><span class="bar"><i style="width:${c/b.ch*100}%"></i></span></span><span class="ct num"></span>`;
@@ -388,6 +407,10 @@ function render(){
   document.getElementById("tabAT").setAttribute("aria-selected", tab === "AT");
   document.getElementById("tabNT").setAttribute("aria-selected", tab === "NT");
   document.getElementById("tabNotes").setAttribute("aria-selected", tab === "NOTAS");
+  document.getElementById("orderBar").hidden = tab === "NOTAS";
+  document.getElementById("orderNote").hidden = tab === "NOTAS" || order !== "chrono";
+  document.getElementById("ordBible").setAttribute("aria-pressed", order === "bible");
+  document.getElementById("ordChrono").setAttribute("aria-pressed", order === "chrono");
   if (openId) renderSheet();
 }
 
@@ -567,6 +590,9 @@ document.getElementById("confirmYes").onclick = () => { clearBook(openId); docum
 document.getElementById("nextBtn").onclick = () => { const nx = nextChapter(); if (nx) toggle(nx[0].id, nx[1]); };
 document.getElementById("tabAT").onclick = () => { tab = "AT"; render(); };
 document.getElementById("tabNT").onclick = () => { tab = "NT"; render(); };
+const setOrder = o => { order = o; try { localStorage.setItem("leitura-biblica-ordem", o); } catch(e) {} render(); };
+document.getElementById("ordBible").onclick = () => setOrder("bible");
+document.getElementById("ordChrono").onclick = () => setOrder("chrono");
 document.getElementById("tabNotes").onclick = () => { tab = "NOTAS"; render(); };
 document.getElementById("modeRead").onclick = () => { flushNote(); mode = "read"; renderSheet(); };
 document.getElementById("modeNote").onclick = () => { mode = "note"; renderSheet(); };

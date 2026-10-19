@@ -17,15 +17,16 @@
 :root {
   --bg: #f6f7f9; --surface: #ffffff; --ink: #1b2233; --muted: #626b7d; --line: #dde1e8;
   --accent: #23407a; --accent-soft: #e3e9f5; --gilt: #b08a2e; --done: #23407a; --done-ink: #ffffff;
+  --k-pro: #a8741a; --k-par: #2f5fb3; --k-cit: #2e7d4f; --k-tem: #8a3f8f;
   --display: "EB Garamond", Georgia, "Times New Roman", serif;
   --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242;
-  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; color-scheme: dark } }
+  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; --k-pro: #e0b45c; --k-par: #8fb0f0; --k-cit: #6fc495; --k-tem: #d38fd8; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242;
-  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; color-scheme: dark }
+  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; --k-pro: #e0b45c; --k-par: #8fb0f0; --k-cit: #6fc495; --k-tem: #d38fd8; color-scheme: dark }
 
 body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
 .wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 28px; }
@@ -101,6 +102,7 @@ header { display: grid; gap: 6px; }
 .sheet-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .chapters button { position: relative; }
 .chapters button.has-note::after { content: ""; position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--gilt); }
+.chapters button.has-link::before { content: ""; position: absolute; left: 7px; right: 7px; bottom: 5px; height: 4px; border-radius: 2px; background: var(--lk); box-shadow: 0 0 0 1.5px var(--surface); }
 .chapters button.sel { outline: 2px solid var(--gilt); outline-offset: 1px; }
 .mode { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--bg); justify-self: start; }
 .mode button { border: 0; background: none; border-radius: 999px; padding: 6px 14px; font-size: .85rem; font-weight: 600; color: var(--muted); }
@@ -114,6 +116,28 @@ header { display: grid; gap: 6px; }
 .chip { border: 1px solid var(--line); background: var(--bg); border-radius: 999px; padding: 6px 12px; font-size: .82rem; font-weight: 600; }
 .chip[aria-pressed="true"] { background: var(--done); color: var(--done-ink); border-color: var(--done); }
 .link-danger { background: none; border: 0; color: var(--muted); font-size: .8rem; text-decoration: underline; padding: 0; }
+.links { display: grid; gap: 8px; }
+.links-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.links-head h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.link-card { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: start; border: 1px solid var(--line); border-left: 5px solid var(--kc); border-radius: 10px; padding: 10px 12px; background: var(--bg); }
+.link-go { background: none; border: 0; padding: 0; text-align: left; display: grid; gap: 2px; min-width: 0; }
+.link-go b { font-family: var(--display); font-weight: 600; font-size: 1.1rem; color: var(--ink); }
+.link-go small { font-size: .74rem; font-weight: 700; letter-spacing: .04em; color: var(--kc); text-transform: uppercase; }
+.link-go span { color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+.link-x { background: none; border: 0; color: var(--muted); font-size: .8rem; text-decoration: underline; padding: 2px 0; }
+.link-x.armed { color: var(--k-tem); font-weight: 700; }
+.lform { display: grid; gap: 10px; border: 1px dashed var(--line); border-radius: 12px; padding: 12px; }
+.lform .row { display: grid; grid-template-columns: 1fr 5.5rem; gap: 8px; }
+.lform label { display: grid; gap: 4px; font-size: .78rem; color: var(--muted); font-weight: 600; min-width: 0; }
+.lform select, .lform input { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; background: var(--surface); color: var(--ink); font: inherit; min-width: 0; }
+.kinds { display: flex; flex-wrap: wrap; gap: 6px; }
+.kind { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 11px; font-size: .82rem; font-weight: 600; }
+.kind i { width: 10px; height: 10px; border-radius: 50%; background: var(--kc); flex: none; }
+.kind[aria-pressed="true"] { border-color: var(--kc); box-shadow: inset 0 0 0 1.5px var(--kc); }
+.lerr { color: var(--k-tem); font-size: .82rem; margin: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .75rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 14px; height: 4px; border-radius: 2px; background: var(--kc); }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -212,7 +236,24 @@ header { display: grid; gap: 6px; }
         <button class="btn" id="edDelYes" type="button">Sim, apagar</button>
         <button class="btn ghost" id="edDelNo" type="button">Cancelar</button>
       </div>
+      <div class="links">
+        <div class="links-head"><h4>Conexões bíblicas</h4><button class="chip" id="lnAdd" type="button">+ Nova conexão</button></div>
+        <form class="lform" id="lnForm" hidden novalidate>
+          <label>Versículo deste capítulo (opcional)<input id="lnFromV" inputmode="text" autocomplete="off" placeholder="ex.: 15 ou 15-17"></label>
+          <div class="row">
+            <label>Conecta com<select id="lnBook"></select></label>
+            <label>Capítulo<input id="lnCh" type="number" inputmode="numeric" min="1" autocomplete="off"></label>
+          </div>
+          <label>Versículo de lá (opcional)<input id="lnToV" inputmode="text" autocomplete="off" placeholder="ex.: 20"></label>
+          <div style="display:grid;gap:6px"><span class="hint">Tipo de conexão</span><div class="kinds" id="lnKinds"></div></div>
+          <label>Observação (opcional)<input id="lnNote" autocomplete="off" placeholder="ex.: a semente da mulher esmagará a serpente"></label>
+          <p class="lerr" id="lnErr" hidden></p>
+          <div class="sheet-actions"><button class="btn" type="submit">Salvar conexão</button><button class="btn ghost" id="lnCancel" type="button">Cancelar</button></div>
+        </form>
+        <div class="links" id="lnList"></div>
+      </div>
     </div>
+    <div class="legend" id="legend"></div>
     <div class="notes" id="bookNotes"></div>
     <div class="sheet-actions" id="sheetActions">
       <button class="btn" id="allBtn" type="button">Marcar livro inteiro</button>
@@ -243,7 +284,8 @@ const BOOKS = []; GROUPS.forEach(([t,g,bs]) => bs.forEach(([id,ab,name,ch]) => B
 const BY = Object.fromEntries(BOOKS.map(b => [b.id, b]));
 const fmt = n => n.toLocaleString("pt-BR");
 
-let state = { read: {}, days: {}, notes: {} };
+let state = { read: {}, days: {}, notes: {}, links: [] };
+let lnKind = "pro", armed = null;
 let tab = "AT", mode = "read", selCh = null, noteTimer = null, query = "", openId = null, saveTimer = null, docRef = null, saving = Promise.resolve();
 const LS = "leitura-biblica-v1";
 
@@ -352,6 +394,8 @@ function renderSheet(){
     const hn = !!noteText(openId, c);
     el.setAttribute("aria-pressed", s.has(c)); el.setAttribute("aria-label", `${b.name} ${c}` + (hn ? ", com anotação" : ""));
     if (hn) el.classList.add("has-note");
+    const ks = [...new Set(linksOf(openId, c).map(l => l.k))];
+    if (ks.length) { el.classList.add("has-link"); el.style.setProperty("--lk", ks.length === 1 ? `var(--k-${ks[0]})` : `linear-gradient(90deg, ${ks.map((k, i) => `var(--k-${k}) ${i/ks.length*100}% ${(i+1)/ks.length*100}%`).join(", ")})`); el.setAttribute("aria-label", el.getAttribute("aria-label") + `, ${linksOf(openId, c).length} conexão(ões)`); }
     if (mode === "note" && selCh === c) el.classList.add("sel");
     el.onclick = () => mode === "note" ? selectChapter(c) : toggle(openId, c);
     grid.appendChild(el);
@@ -360,14 +404,17 @@ function renderSheet(){
   document.getElementById("clearBtn").hidden = s.size === 0;
   document.getElementById("modeRead").setAttribute("aria-pressed", mode === "read");
   document.getElementById("modeNote").setAttribute("aria-pressed", mode === "note");
-  document.getElementById("modeHint").textContent = mode === "note" ? "Toque num capítulo para escrever sua anotação. O ponto dourado indica capítulos anotados." : "Toque num capítulo para marcar ou desmarcar. O ponto dourado indica capítulos anotados.";
+  document.getElementById("modeHint").textContent = mode === "note" ? "Toque num capítulo para escrever anotações e criar conexões. Ponto dourado: anotação. Faixa colorida: conexão." : "Toque num capítulo para marcar ou desmarcar. Ponto dourado: anotação. Faixa colorida: conexão.";
   const ed = document.getElementById("editor");
   ed.hidden = !(mode === "note" && selCh);
   if (!ed.hidden) {
     document.getElementById("edTitle").textContent = `${b.name} ${selCh}`;
     const r = document.getElementById("edRead"); r.setAttribute("aria-pressed", s.has(selCh)); r.textContent = s.has(selCh) ? "✓ Lido" : "Marcar como lido";
     document.getElementById("edDel").hidden = !noteText(openId, selCh);
+    renderLinks();
   }
+  const lg = document.getElementById("legend"); lg.innerHTML = "";
+  if (state.links.some(l => l.a.b === openId || l.b.b === openId)) for (const [k, name] of KINDS) { const sp = document.createElement("span"); sp.style.setProperty("--kc", `var(--k-${k})`); sp.innerHTML = "<i></i>"; sp.append(name); lg.appendChild(sp); }
   // lista de anotações do livro
   const bn = document.getElementById("bookNotes"); bn.innerHTML = "";
   const list = Object.keys(state.notes[openId] || {}).map(Number).sort((a,b) => a-b);
@@ -376,6 +423,61 @@ function renderSheet(){
     for (const c of list) bn.appendChild(noteItem(openId, c, `${b.name} ${c}`, () => { mode = "note"; selectChapter(c); }));
   }
 }
+
+// conexões
+const KINDS = [["pro","Profecia e cumprimento"],["par","Texto paralelo"],["cit","Citação"],["tem","Mesmo tema"]];
+const KNAME = Object.fromEntries(KINDS);
+const linksOf = (id, c) => state.links.filter(l => (l.a.b === id && l.a.c === c) || (l.b.b === id && l.b.c === c));
+const refTxt = r => `${BY[r.b].name} ${r.c}${r.v ? ":" + r.v : ""}`;
+function goTo(id, c){ flushNote(); if (openId !== id) openBook(id); mode = "note"; selectChapter(c); }
+function renderLinks(){
+  const box = document.getElementById("lnList"); box.innerHTML = "";
+  const ls = linksOf(openId, selCh);
+  if (!ls.length && document.getElementById("lnForm").hidden) { const p = document.createElement("p"); p.className = "hint"; p.textContent = "Ligue este capítulo a outro trecho da Bíblia. A conexão aparece nos dois capítulos."; box.appendChild(p); }
+  for (const l of ls) {
+    const here = l.a.b === openId && l.a.c === selCh ? l.a : l.b, there = here === l.a ? l.b : l.a;
+    const card = document.createElement("div"); card.className = "link-card"; card.style.setProperty("--kc", `var(--k-${l.k})`);
+    const go = document.createElement("button"); go.type = "button"; go.className = "link-go";
+    go.innerHTML = "<small></small><b></b><span></span>";
+    go.querySelector("small").textContent = KNAME[l.k];
+    go.querySelector("b").textContent = (here.v ? `v. ${here.v} ↔ ` : "↔ ") + refTxt(there);
+    go.querySelector("span").textContent = l.n || "";
+    go.setAttribute("aria-label", `Abrir ${refTxt(there)}`);
+    go.onclick = () => goTo(there.b, there.c);
+    const x = document.createElement("button"); x.type = "button"; x.className = "link-x" + (armed === l.id ? " armed" : "");
+    x.textContent = armed === l.id ? "Confirmar remoção" : "Remover";
+    x.onclick = () => { if (armed === l.id) { state.links = state.links.filter(z => z.id !== l.id); armed = null; persist(); render(); } else { armed = l.id; renderLinks(); } };
+    card.append(go, x); box.appendChild(card);
+  }
+}
+function openLinkForm(){
+  armed = null;
+  const f = document.getElementById("lnForm"); f.reset(); f.hidden = false;
+  document.getElementById("lnErr").hidden = true;
+  document.getElementById("lnBook").value = openId; syncChMax();
+  lnKind = "pro"; paintKinds(); renderLinks();
+  document.getElementById("lnFromV").focus();
+}
+function syncChMax(){ const b = BY[document.getElementById("lnBook").value]; const i = document.getElementById("lnCh"); i.max = b.ch; i.placeholder = `1–${b.ch}`; }
+function paintKinds(){ document.querySelectorAll("#lnKinds .kind").forEach(k => k.setAttribute("aria-pressed", k.dataset.k === lnKind)); }
+(function setupLinkForm(){
+  const sel = document.getElementById("lnBook");
+  for (const [t, g, bs] of GROUPS) { const og = document.createElement("optgroup"); og.label = (t === "AT" ? "AT · " : "NT · ") + g; for (const [id,, name] of bs) { const o = document.createElement("option"); o.value = id; o.textContent = name; og.appendChild(o); } sel.appendChild(og); }
+  sel.onchange = syncChMax;
+  const kb = document.getElementById("lnKinds");
+  for (const [k, name] of KINDS) { const b = document.createElement("button"); b.type = "button"; b.className = "kind"; b.dataset.k = k; b.style.setProperty("--kc", `var(--k-${k})`); b.innerHTML = "<i></i>"; b.append(name); b.onclick = () => { lnKind = k; paintKinds(); }; kb.appendChild(b); }
+  document.getElementById("lnAdd").onclick = openLinkForm;
+  document.getElementById("lnCancel").onclick = () => { document.getElementById("lnForm").hidden = true; renderLinks(); };
+  document.getElementById("lnForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const err = document.getElementById("lnErr"), bid = sel.value, b = BY[bid], c = parseInt(document.getElementById("lnCh").value, 10);
+    const fv = document.getElementById("lnFromV").value.trim().replace(/\s+/g, ""), tv = document.getElementById("lnToV").value.trim().replace(/\s+/g, "");
+    if (!c || c < 1 || c > b.ch) { err.textContent = `Informe um capítulo de 1 a ${b.ch} para ${b.name}.`; err.hidden = false; return; }
+    if (bid === openId && c === selCh && !fv && !tv) { err.textContent = "Escolha outro capítulo, ou informe os versículos para ligar trechos do mesmo capítulo."; err.hidden = false; return; }
+    state.links.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), a: { b: openId, c: selCh, v: fv }, b: { b: bid, c, v: tv }, k: lnKind, n: document.getElementById("lnNote").value.trim(), d: todayKey() });
+    document.getElementById("lnForm").hidden = true; persist(); render();
+  });
+})();
 
 // anotações
 const noteText = (id, c) => state.notes[id] && state.notes[id][c] ? state.notes[id][c].t : "";
@@ -390,7 +492,7 @@ function noteItem(id, c, label, onclick){
   btn.onclick = onclick; return btn;
 }
 function selectChapter(c){
-  flushNote(); selCh = c;
+  flushNote(); selCh = c; armed = null; document.getElementById("lnForm").hidden = true;
   document.getElementById("edConfirm").hidden = true;
   const ta = document.getElementById("edText"); ta.value = noteText(openId, c);
   document.getElementById("edSaved").textContent = ta.value ? "Anotação salva" : " ";
@@ -412,7 +514,7 @@ function flushNote(){ if (noteTimer) { clearTimeout(noteTimer); noteTimer = null
 function renderAllNotes(box){
   const wrap = document.createElement("div"); wrap.style.cssText = "display:grid;gap:10px;padding-top:10px";
   const inp = document.createElement("input"); inp.type = "search"; inp.id = "noteSearch"; inp.className = "search";
-  inp.placeholder = "Buscar nas anotações"; inp.value = query; inp.setAttribute("aria-label", "Buscar nas anotações");
+  inp.placeholder = "Buscar nas anotações e conexões"; inp.value = query; inp.setAttribute("aria-label", "Buscar nas anotações");
   const list = document.createElement("div"); list.className = "notes";
   const fill = () => {
     list.innerHTML = ""; const q = query.trim().toLowerCase(); let n = 0;
@@ -424,8 +526,22 @@ function renderAllNotes(box){
         list.appendChild(noteItem(b.id, c, label, () => { openBook(b.id); mode = "note"; selectChapter(c); })); n++;
       }
     }
+    const ls = state.links.filter(l => !q || [refTxt(l.a), refTxt(l.b), l.n || "", KNAME[l.k]].some(x => x.toLowerCase().includes(q)));
+    if (ls.length) {
+      const h = document.createElement("h4"); h.textContent = "Conexões"; h.style.paddingTop = "16px"; list.appendChild(h);
+      const order = r => BOOKS.findIndex(b => b.id === r.b) * 1000 + r.c;
+      for (const l of ls.slice().sort((x, y) => order(x.a) - order(y.a))) {
+        const btn = document.createElement("button"); btn.type = "button"; btn.className = "note-item"; btn.style.setProperty("--kc", `var(--k-${l.k})`);
+        btn.style.borderLeft = "4px solid var(--kc)"; btn.style.paddingLeft = "10px";
+        btn.innerHTML = "<b></b><span></span><small></small>";
+        btn.querySelector("b").textContent = `${refTxt(l.a)} ↔ ${refTxt(l.b)}`;
+        btn.querySelector("span").textContent = l.n || "";
+        btn.querySelector("small").textContent = KNAME[l.k];
+        btn.onclick = () => goTo(l.a.b, l.a.c); list.appendChild(btn); n++;
+      }
+    }
     if (!n) { const p = document.createElement("p"); p.className = "empty";
-      p.textContent = q ? "Nenhuma anotação encontrada para essa busca." : "Você ainda não tem anotações. Abra um livro, toque em Anotar e escolha um capítulo."; list.appendChild(p); }
+      p.textContent = q ? "Nenhuma anotação encontrada para essa busca." : "Você ainda não tem anotações nem conexões. Abra um livro, toque em Anotar e escolha um capítulo."; list.appendChild(p); }
   };
   inp.oninput = () => { query = inp.value; fill(); };
   fill(); wrap.append(inp, list); box.appendChild(wrap);
@@ -462,7 +578,7 @@ document.getElementById("edDelYes").onclick = () => {
   document.getElementById("edText").value = ""; document.getElementById("edConfirm").hidden = true; saveNote();
 };
 
-function clean(d){ const o = k => (d && typeof d[k] === "object" && d[k]) || {}; return { read: o("read"), days: o("days"), notes: o("notes") }; }
+function clean(d){ const o = k => (d && typeof d[k] === "object" && d[k]) || {}; return { read: o("read"), days: o("days"), notes: o("notes"), links: Array.isArray(d && d.links) ? d.links.filter(l => l && l.a && l.b && BY[l.a.b] && BY[l.b.b]) : [] }; }
 
 try { const s = localStorage.getItem(LS); if (s) state = clean(JSON.parse(s)); } catch(e) {}
 render();

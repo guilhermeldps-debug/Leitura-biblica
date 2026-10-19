@@ -48,6 +48,10 @@ header { display: grid; gap: 6px; }
 .big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .big strong { font-family: var(--display); font-size: 3rem; line-height: 1; color: var(--accent); }
 .big span { color: var(--muted); }
+.books-total { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: -8px; }
+.books-total #bkBig { font-family: var(--display); font-size: 1.6rem; font-weight: 600; line-height: 1; color: var(--gilt); }
+.books-total #bkSub { color: var(--muted); font-size: .82rem; }
+.tsub { display: block; color: var(--muted); font-size: .76rem; }
 .bar { height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
 .testaments { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -172,15 +176,16 @@ header { display: grid; gap: 6px; }
 
   <section class="summary" aria-label="Resumo">
     <div class="big"><strong class="num" id="pct">0%</strong><span class="num" id="pctTxt">0 de 1.189 capítulos lidos</span></div>
+    <div class="books-total"><span class="num" id="bkBig">0</span><span>de 66 livros concluídos</span></div>
     <div class="bar"><i id="barAll" style="width:0"></i></div>
     <div class="testaments">
-      <div><label><span>Antigo Testamento</span><span class="num" id="atTxt">0/929</span></label><div class="bar"><i id="barAT" style="width:0"></i></div></div>
-      <div><label><span>Novo Testamento</span><span class="num" id="ntTxt">0/260</span></label><div class="bar"><i id="barNT" style="width:0"></i></div></div>
+      <div><label><span>Antigo Testamento</span><span class="num" id="atTxt">0/929</span></label><span class="tsub num" id="atBk">0/39 livros</span><div class="bar"><i id="barAT" style="width:0"></i></div></div>
+      <div><label><span>Novo Testamento</span><span class="num" id="ntTxt">0/260</span></label><span class="tsub num" id="ntBk">0/27 livros</span><div class="bar"><i id="barNT" style="width:0"></i></div></div>
     </div>
     <div class="stats">
       <div><b class="num" id="sToday">0</b><small>capítulos hoje</small></div>
       <div><b class="num" id="sStreak">0</b><small>dias seguidos</small></div>
-      <div><b class="num" id="sBooks">0</b><small>livros concluídos</small></div>
+      <div><b class="num" id="sBooks">0</b><small>livros em andamento</small></div>
     </div>
     <div class="heat">
       <div class="heat-grid" id="heat" aria-label="Dias de leitura nas últimas 16 semanas"></div>
@@ -329,8 +334,8 @@ function streak(){
 }
 
 function render(){
-  let at = 0, nt = 0, done = 0;
-  for (const b of BOOKS) { const c = countBook(b.id); if (b.t === "AT") at += c; else nt += c; if (c === b.ch) done++; }
+  let at = 0, nt = 0, done = 0, doneAT = 0, doneNT = 0, started = 0;
+  for (const b of BOOKS) { const c = countBook(b.id); if (b.t === "AT") at += c; else nt += c; if (c === b.ch) { done++; if (b.t === "AT") doneAT++; else doneNT++; } else if (c > 0) started++; }
   const all = at + nt, p = all / 1189 * 100;
   document.getElementById("pct").textContent = (p > 0 && p < 1 ? p.toFixed(1).replace(".", ",") : Math.round(p)) + "%";
   document.getElementById("pctTxt").textContent = `${fmt(all)} de 1.189 capítulos lidos`;
@@ -341,7 +346,10 @@ function render(){
   document.getElementById("barNT").style.width = nt / 260 * 100 + "%";
   document.getElementById("sToday").textContent = state.days[todayKey()] || 0;
   document.getElementById("sStreak").textContent = streak();
-  document.getElementById("sBooks").textContent = done;
+  document.getElementById("sBooks").textContent = started;
+  document.getElementById("bkBig").textContent = done;
+  document.getElementById("atBk").textContent = `${doneAT}/39 livros`;
+  document.getElementById("ntBk").textContent = `${doneNT}/27 livros`;
 
   // mapa de dias
   const heat = document.getElementById("heat"); heat.innerHTML = "";

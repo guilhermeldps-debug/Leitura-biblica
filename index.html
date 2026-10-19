@@ -128,6 +128,8 @@ header { display: grid; gap: 6px; }
 .link-go small { font-size: .74rem; font-weight: 700; letter-spacing: .04em; color: var(--kc); text-transform: uppercase; }
 .link-go span { color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; white-space: pre-wrap; }
 .link-x { background: none; border: 0; color: var(--muted); font-size: .8rem; text-decoration: underline; padding: 2px 0; }
+.link-acts { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.link-card.editing { opacity: .45; }
 .link-x.armed { color: var(--k-tem); font-weight: 700; }
 .lform { display: grid; gap: 10px; border: 1px dashed var(--line); border-radius: 12px; padding: 12px; }
 .lform .row { display: grid; grid-template-columns: 1fr 5.5rem; gap: 8px; }
@@ -277,7 +279,7 @@ header { display: grid; gap: 6px; }
           <div style="display:grid;gap:6px"><span class="hint">Tipo de conexão</span><div class="kinds" id="lnKinds"></div></div>
           <label>Observação (opcional)<input id="lnNote" autocomplete="off" placeholder="ex.: a semente da mulher esmagará a serpente"></label>
           <p class="lerr" id="lnErr" hidden></p>
-          <div class="sheet-actions"><button class="btn" type="submit">Salvar conexão</button><button class="btn ghost" id="lnCancel" type="button">Cancelar</button></div>
+          <div class="sheet-actions"><button class="btn" type="submit" id="lnSubmit">Salvar conexão</button><button class="btn ghost" id="lnCancel" type="button">Cancelar</button></div>
         </form>
         <div class="links" id="lnList"></div>
       </div>
@@ -322,7 +324,7 @@ const BY = Object.fromEntries(BOOKS.map(b => [b.id, b]));
 const fmt = n => n.toLocaleString("pt-BR");
 
 let state = { read: {}, days: {}, notes: {}, links: [] };
-let lnKind = "pro", armed = null;
+let lnKind = "pro", armed = null, editingId = null;
 let tab = "AT", mode = "read", selCh = null, noteTimer = null, query = "", openId = null, saveTimer = null, docRef = null, saving = Promise.resolve();
 const LS = "leitura-biblica-v1";
 
@@ -499,20 +501,37 @@ function renderLinks(){
     go.querySelector("span").textContent = l.n || "";
     go.setAttribute("aria-label", `Abrir ${refTxt(there)}`);
     go.onclick = () => goTo(there.b, there.c);
+    if (editingId === l.id) card.classList.add("editing");
+    const ed = document.createElement("button"); ed.type = "button"; ed.className = "link-x"; ed.textContent = "Editar";
+    ed.setAttribute("aria-label", `Editar conexão com ${refTxt(there)}`);
+    ed.onclick = () => openLinkForm(l);
     const x = document.createElement("button"); x.type = "button"; x.className = "link-x" + (armed === l.id ? " armed" : "");
     x.textContent = armed === l.id ? "Confirmar remoção" : "Remover";
     x.onclick = () => { if (armed === l.id) { state.links = state.links.filter(z => z.id !== l.id); armed = null; persist(); render(); } else { armed = l.id; renderLinks(); } };
-    card.append(go, x); box.appendChild(card);
+    const acts = document.createElement("div"); acts.className = "link-acts"; acts.append(ed, x);
+    card.append(go, acts); box.appendChild(card);
   }
 }
-function openLinkForm(){
-  armed = null;
+function linkSides(l){ const here = l.a.b === openId && l.a.c === selCh ? l.a : l.b; return [here, here === l.a ? l.b : l.a]; }
+function openLinkForm(l){
+  armed = null; editingId = l && l.id ? l.id : null;
   const f = document.getElementById("lnForm"); f.reset(); f.hidden = false;
   document.getElementById("lnErr").hidden = true;
-  document.getElementById("lnBook").value = openId; syncChMax();
-  lnKind = "pro"; paintKinds(); renderLinks();
+  if (editingId) {
+    const [here, there] = linkSides(l);
+    document.getElementById("lnFromV").value = here.v || "";
+    document.getElementById("lnBook").value = there.b; syncChMax();
+    document.getElementById("lnCh").value = there.c;
+    document.getElementById("lnToV").value = there.v || "";
+    document.getElementById("lnNote").value = l.n || "";
+    lnKind = l.k;
+  } else { document.getElementById("lnBook").value = openId; syncChMax(); lnKind = "pro"; }
+  document.getElementById("lnSubmit").textContent = editingId ? "Salvar alterações" : "Salvar conexão";
+  paintKinds(); renderLinks();
+  f.scrollIntoView({ block: "nearest" });
   document.getElementById("lnFromV").focus();
 }
+function closeLinkForm(){ document.getElementById("lnForm").hidden = true; editingId = null; }
 function syncChMax(){ const b = BY[document.getElementById("lnBook").value]; const i = document.getElementById("lnCh"); i.max = b.ch; i.placeholder = `1–${b.ch}`; }
 function paintKinds(){ document.querySelectorAll("#lnKinds .kind").forEach(k => k.setAttribute("aria-pressed", k.dataset.k === lnKind)); }
 (function setupLinkForm(){
@@ -521,16 +540,21 @@ function paintKinds(){ document.querySelectorAll("#lnKinds .kind").forEach(k => 
   sel.onchange = syncChMax;
   const kb = document.getElementById("lnKinds");
   for (const [k, name] of KINDS) { const b = document.createElement("button"); b.type = "button"; b.className = "kind"; b.dataset.k = k; b.style.setProperty("--kc", `var(--k-${k})`); b.innerHTML = "<i></i>"; b.append(name); b.onclick = () => { lnKind = k; paintKinds(); }; kb.appendChild(b); }
-  document.getElementById("lnAdd").onclick = openLinkForm;
-  document.getElementById("lnCancel").onclick = () => { document.getElementById("lnForm").hidden = true; renderLinks(); };
+  document.getElementById("lnAdd").onclick = () => openLinkForm();
+  document.getElementById("lnCancel").onclick = () => { closeLinkForm(); renderLinks(); };
   document.getElementById("lnForm").addEventListener("submit", e => {
     e.preventDefault();
     const err = document.getElementById("lnErr"), bid = sel.value, b = BY[bid], c = parseInt(document.getElementById("lnCh").value, 10);
     const fv = document.getElementById("lnFromV").value.trim().replace(/\s+/g, ""), tv = document.getElementById("lnToV").value.trim().replace(/\s+/g, "");
     if (!c || c < 1 || c > b.ch) { err.textContent = `Informe um capítulo de 1 a ${b.ch} para ${b.name}.`; err.hidden = false; return; }
     if (bid === openId && c === selCh && !fv && !tv) { err.textContent = "Escolha outro capítulo, ou informe os versículos para ligar trechos do mesmo capítulo."; err.hidden = false; return; }
-    state.links.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), a: { b: openId, c: selCh, v: fv }, b: { b: bid, c, v: tv }, k: lnKind, n: document.getElementById("lnNote").value.trim(), d: todayKey() });
-    document.getElementById("lnForm").hidden = true; persist(); render();
+    const note = document.getElementById("lnNote").value.trim();
+    const cur = editingId && state.links.find(z => z.id === editingId);
+    if (cur) {
+      const [here, there] = linkSides(cur);
+      here.v = fv; there.b = bid; there.c = c; there.v = tv; cur.k = lnKind; cur.n = note; cur.d = todayKey();
+    } else state.links.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), a: { b: openId, c: selCh, v: fv }, b: { b: bid, c, v: tv }, k: lnKind, n: note, d: todayKey() });
+    closeLinkForm(); persist(); render();
   });
 })();
 
@@ -547,7 +571,7 @@ function noteItem(id, c, label, onclick){
   btn.onclick = onclick; return btn;
 }
 function selectChapter(c){
-  flushNote(); selCh = c; armed = null; document.getElementById("lnForm").hidden = true;
+  flushNote(); selCh = c; armed = null; closeLinkForm();
   document.getElementById("edConfirm").hidden = true;
   const ta = document.getElementById("edText"); ta.value = noteText(openId, c);
   document.getElementById("edSaved").textContent = ta.value ? "Anotação salva" : " ";

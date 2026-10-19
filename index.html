@@ -49,8 +49,7 @@ header { display: grid; gap: 6px; }
 .big strong { font-family: var(--display); font-size: 3rem; line-height: 1; color: var(--accent); }
 .big span { color: var(--muted); }
 .books-total { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-top: -8px; }
-.books-total #bkBig { font-family: var(--display); font-size: 1.6rem; font-weight: 600; line-height: 1; color: var(--gilt); }
-.books-total #bkSub { color: var(--muted); font-size: .82rem; }
+.books-total #pct { font-family: var(--display); font-size: 1.6rem; font-weight: 600; line-height: 1; color: var(--gilt); }
 .tsub { display: block; color: var(--muted); font-size: .76rem; }
 .bar { height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
@@ -175,8 +174,8 @@ header { display: grid; gap: 6px; }
   </header>
 
   <section class="summary" aria-label="Resumo">
-    <div class="big"><strong class="num" id="pct">0%</strong><span class="num" id="pctTxt">0 de 1.189 capítulos lidos</span></div>
-    <div class="books-total"><span class="num" id="bkBig">0</span><span>de 66 livros concluídos</span></div>
+    <div class="big"><strong class="num" id="bkBig">0</strong><span>de 66 livros concluídos</span></div>
+    <div class="books-total"><span class="num" id="pct">0%</span><span class="num" id="pctTxt">0 de 1.189 capítulos lidos</span></div>
     <div class="bar"><i id="barAll" style="width:0"></i></div>
     <div class="testaments">
       <div><label><span>Antigo Testamento</span><span class="num" id="atTxt">0/929</span></label><span class="tsub num" id="atBk">0/39 livros</span><div class="bar"><i id="barAT" style="width:0"></i></div></div>

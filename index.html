@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#23407a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Leitura Bíblica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} body{margin:0} [hidden]{display:none!important}
+/* Layout: uma coluna estreita como a página de uma Bíblia; resumo no topo, livros agrupados por seção, capítulos numa folha que sobe de baixo. */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --ink: #1b2233; --muted: #626b7d; --line: #dde1e8;
+  --accent: #23407a; --accent-soft: #e3e9f5; --gilt: #b08a2e; --done: #23407a; --done-ink: #ffffff;
+  --display: "EB Garamond", Georgia, "Times New Roman", serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242;
+  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242;
+  --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a; --done: #7f9ad8; --done-ink: #0e1220; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap: balance; }
+h1 { font-size: 2.1rem; line-height: 1.1; }
+.eyebrow { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gilt); font-weight: 700; }
+.num { font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: grid; gap: 6px; }
+.status { font-size: .8rem; color: var(--muted); }
+
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 18px; }
+.big { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.big strong { font-family: var(--display); font-size: 3rem; line-height: 1; color: var(--accent); }
+.big span { color: var(--muted); }
+.bar { height: 6px; background: var(--accent-soft); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s; }
+.testaments { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.testaments div { display: grid; gap: 6px; }
+.testaments label { font-size: .85rem; display: flex; justify-content: space-between; gap: 8px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; }
+.stats div { display: grid; }
+.stats b { font-size: 1.35rem; font-family: var(--display); }
+.stats small { color: var(--muted); font-size: .75rem; line-height: 1.3; }
+
+.heat { display: grid; gap: 8px; }
+.heat-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr); gap: 3px; }
+.heat-grid span { aspect-ratio: 1; border-radius: 2px; background: var(--accent-soft); max-width: 100%; }
+.heat-grid span[data-l="1"] { background: color-mix(in srgb, var(--accent) 45%, var(--accent-soft)); }
+.heat-grid span[data-l="2"] { background: color-mix(in srgb, var(--accent) 75%, var(--accent-soft)); }
+.heat-grid span[data-l="3"] { background: var(--accent); }
+.heat-grid span.today { outline: 1.5px solid var(--gilt); outline-offset: 1px; }
+.heat-legend { font-size: .75rem; color: var(--muted); display: flex; justify-content: space-between; }
+
+.next { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; }
+.next p { margin: 0; min-width: 0; }
+.next p small { display: block; color: var(--muted); font-size: .78rem; }
+.next p b { font-family: var(--display); font-size: 1.3rem; font-weight: 600; }
+.btn { background: var(--accent); color: var(--bg); border: 0; border-radius: 999px; padding: 9px 18px; font-weight: 700; font-size: .9rem; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); }
+.tabs button { background: none; border: 0; padding: 8px 4px 10px; margin-right: 14px; font-family: var(--display); font-size: 1.2rem; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-color: var(--gilt); }
+
+.section { display: grid; gap: 6px; }
+.section h3 { font-size: .74rem; font-family: var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 10px 0 2px; }
+.book { display: grid; grid-template-columns: 2.6rem 1fr auto; align-items: center; gap: 12px; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; text-align: left; width: 100%; }
+.book .ab { font-family: var(--display); font-weight: 600; color: var(--accent); font-size: 1.05rem; }
+.book .nm { display: grid; gap: 5px; min-width: 0; }
+.book .nm span { font-weight: 600; }
+.book .bar { height: 3px; }
+.book .ct { font-size: .82rem; color: var(--muted); }
+.book.complete .ct { color: var(--gilt); font-weight: 700; }
+
+.sheet-bg { position: fixed; inset: 0; background: rgb(10 14 24 / .45); z-index: 20; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 21; background: var(--surface); border-radius: 18px 18px 0 0; max-height: 86%; overflow-y: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-top: 18px; padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+.sheet-in { max-width: 640px; margin: 0 auto; display: grid; gap: 16px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.sheet-head h2 { font-size: 1.8rem; line-height: 1.1; }
+.sheet-head p { margin: 2px 0 0; color: var(--muted); font-size: .85rem; }
+.close { background: var(--accent-soft); border: 0; border-radius: 999px; width: 36px; height: 36px; font-size: 1.2rem; flex: none; }
+.chapters { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; }
+.chapters button { aspect-ratio: 1; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; font-weight: 600; font-variant-numeric: tabular-nums; max-width: 100%; }
+.chapters button[aria-pressed="true"] { background: var(--done); color: var(--done-ink); border-color: var(--done); }
+.sheet-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.backup { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 18px; }
+.backup h3 { font-size: 1.2rem; }
+.hint { color: var(--muted); font-size: .8rem; margin: 0; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">66 livros · 1.189 capítulos</div>
+    <h1>Diário de Leitura Bíblica</h1>
+    <div class="status" id="status">Progresso salvo neste celular</div>
+  </header>
+
+  <section class="summary" aria-label="Resumo">
+    <div class="big"><strong class="num" id="pct">0%</strong><span class="num" id="pctTxt">0 de 1.189 capítulos lidos</span></div>
+    <div class="bar"><i id="barAll" style="width:0"></i></div>
+    <div class="testaments">
+      <div><label><span>Antigo Testamento</span><span class="num" id="atTxt">0/929</span></label><div class="bar"><i id="barAT" style="width:0"></i></div></div>
+      <div><label><span>Novo Testamento</span><span class="num" id="ntTxt">0/260</span></label><div class="bar"><i id="barNT" style="width:0"></i></div></div>
+    </div>
+    <div class="stats">
+      <div><b class="num" id="sToday">0</b><small>capítulos hoje</small></div>
+      <div><b class="num" id="sStreak">0</b><small>dias seguidos</small></div>
+      <div><b class="num" id="sBooks">0</b><small>livros concluídos</small></div>
+    </div>
+    <div class="heat">
+      <div class="heat-grid" id="heat" aria-label="Dias de leitura nas últimas 16 semanas"></div>
+      <div class="heat-legend"><span>últimas 16 semanas</span><span>mais escuro = mais capítulos</span></div>
+    </div>
+  </section>
+
+  <section class="next" id="nextBox">
+    <p><small>Próximo capítulo</small><b id="nextTxt">Gênesis 1</b></p>
+    <button class="btn" id="nextBtn" type="button">Marcar como lido</button>
+  </section>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tabAT" aria-selected="true" type="button">Antigo Testamento</button>
+    <button role="tab" id="tabNT" aria-selected="false" type="button">Novo Testamento</button>
+  </nav>
+  <div id="books" style="display:grid;gap:8px"></div>
+  <section class="backup">
+    <h3>Backup</h3>
+    <p class="hint">Seu progresso fica guardado neste celular. Salve um backup de vez em quando para não perder nada se trocar de aparelho.</p>
+    <div class="sheet-actions">
+      <button class="btn ghost" id="expBtn" type="button">Salvar backup</button>
+      <button class="btn ghost" id="impBtn" type="button">Restaurar backup</button>
+      <input type="file" id="impFile" accept="application/json,.json" hidden>
+    </div>
+  </section>
+</div>
+
+<div class="sheet-bg" id="sheetBg" hidden></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="sheet-in">
+    <div class="sheet-head">
+      <div><h2 id="sheetTitle">Livro</h2><p class="num" id="sheetSub"></p></div>
+      <button class="close" id="closeBtn" type="button" aria-label="Fechar">×</button>
+    </div>
+    <p class="hint">Toque num capítulo para marcar ou desmarcar.</p>
+    <div class="chapters" id="chapters"></div>
+    <div class="sheet-actions" id="sheetActions">
+      <button class="btn" id="allBtn" type="button">Marcar livro inteiro</button>
+      <button class="btn ghost" id="clearBtn" type="button">Desmarcar tudo</button>
+    </div>
+    <div class="confirm" id="confirmBox" hidden>
+      <span>Desmarcar todos os capítulos deste livro?</span>
+      <button class="btn" id="confirmYes" type="button">Sim, desmarcar</button>
+      <button class="btn ghost" id="confirmNo" type="button">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const GROUPS = [
+  ["AT","Pentateuco",[["gn","Gn","Gênesis",50],["ex","Êx","Êxodo",40],["lv","Lv","Levítico",27],["nm","Nm","Números",36],["dt","Dt","Deuteronômio",34]]],
+  ["AT","Livros históricos",[["js","Js","Josué",24],["jz","Jz","Juízes",21],["rt","Rt","Rute",4],["1sm","1Sm","1 Samuel",31],["2sm","2Sm","2 Samuel",24],["1rs","1Rs","1 Reis",22],["2rs","2Rs","2 Reis",25],["1cr","1Cr","1 Crônicas",29],["2cr","2Cr","2 Crônicas",36],["ed","Ed","Esdras",10],["ne","Ne","Neemias",13],["et","Et","Ester",10]]],
+  ["AT","Livros poéticos",[["jo","Jó","Jó",42],["sl","Sl","Salmos",150],["pv","Pv","Provérbios",31],["ec","Ec","Eclesiastes",12],["ct","Ct","Cânticos",8]]],
+  ["AT","Profetas maiores",[["is","Is","Isaías",66],["jr","Jr","Jeremias",52],["lm","Lm","Lamentações",5],["ez","Ez","Ezequiel",48],["dn","Dn","Daniel",12]]],
+  ["AT","Profetas menores",[["os","Os","Oseias",14],["jl","Jl","Joel",3],["am","Am","Amós",9],["ob","Ob","Obadias",1],["jn","Jn","Jonas",4],["mq","Mq","Miqueias",7],["na","Na","Naum",3],["hc","Hc","Habacuque",3],["sf","Sf","Sofonias",3],["ag","Ag","Ageu",2],["zc","Zc","Zacarias",14],["ml","Ml","Malaquias",4]]],
+  ["NT","Evangelhos",[["mt","Mt","Mateus",28],["mc","Mc","Marcos",16],["lc","Lc","Lucas",24],["joa","Jo","João",21]]],
+  ["NT","Histórico",[["at","At","Atos",28]]],
+  ["NT","Cartas de Paulo",[["rm","Rm","Romanos",16],["1co","1Co","1 Coríntios",16],["2co","2Co","2 Coríntios",13],["gl","Gl","Gálatas",6],["ef","Ef","Efésios",6],["fp","Fp","Filipenses",4],["cl","Cl","Colossenses",4],["1ts","1Ts","1 Tessalonicenses",5],["2ts","2Ts","2 Tessalonicenses",3],["1tm","1Tm","1 Timóteo",6],["2tm","2Tm","2 Timóteo",4],["tt","Tt","Tito",3],["fm","Fm","Filemom",1]]],
+  ["NT","Cartas gerais",[["hb","Hb","Hebreus",13],["tg","Tg","Tiago",5],["1pe","1Pe","1 Pedro",5],["2pe","2Pe","2 Pedro",3],["1jo","1Jo","1 João",5],["2jo","2Jo","2 João",1],["3jo","3Jo","3 João",1],["jd","Jd","Judas",1]]],
+  ["NT","Profecia",[["ap","Ap","Apocalipse",22]]]
+];
+const BOOKS = []; GROUPS.forEach(([t,g,bs]) => bs.forEach(([id,ab,name,ch]) => BOOKS.push({id,ab,name,ch,t,g})));
+const BY = Object.fromEntries(BOOKS.map(b => [b.id, b]));
+const fmt = n => n.toLocaleString("pt-BR");
+
+let state = { read: {}, days: {} };
+let tab = "AT", openId = null, saveTimer = null, docRef = null, saving = Promise.resolve();
+const LS = "leitura-biblica-v1";
+
+const dayKey = d => { const z = new Date(d); z.setMinutes(z.getMinutes() - z.getTimezoneOffset()); return z.toISOString().slice(0,10); };
+const todayKey = () => dayKey(new Date());
+const readSet = id => new Set(state.read[id] || []);
+const countBook = id => (state.read[id] || []).length;
+
+function setStatus(t){ document.getElementById("status").textContent = t; }
+
+function persist(){
+  try { localStorage.setItem(LS, JSON.stringify(state)); setStatus("Progresso salvo neste celular"); }
+  catch(e) { setStatus("Não foi possível salvar. Verifique o espaço do celular."); }
+}
+function toggle(id, ch){
+  const s = readSet(id), t = todayKey();
+  if (s.has(ch)) { s.delete(ch); if (state.days[t]) { state.days[t]--; if (!state.days[t]) delete state.days[t]; } }
+  else { s.add(ch); state.days[t] = (state.days[t] || 0) + 1; }
+  state.read[id] = [...s].sort((a,b) => a-b);
+  if (!state.read[id].length) delete state.read[id];
+  persist(); render();
+}
+function markAll(id){
+  const b = BY[id], s = readSet(id), added = b.ch - s.size;
+  if (!added) return;
+  state.read[id] = Array.from({length: b.ch}, (_, i) => i+1);
+  const t = todayKey(); state.days[t] = (state.days[t] || 0) + added;
+  persist(); render();
+}
+function clearBook(id){ delete state.read[id]; persist(); render(); }
+
+function nextChapter(){
+  for (const b of BOOKS) { const s = readSet(b.id); if (s.size < b.ch) for (let c = 1; c <= b.ch; c++) if (!s.has(c)) return [b, c]; }
+  return null;
+}
+function streak(){
+  let n = 0; const d = new Date();
+  if (!state.days[dayKey(d)]) d.setDate(d.getDate() - 1);
+  while (state.days[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+function render(){
+  let at = 0, nt = 0, done = 0;
+  for (const b of BOOKS) { const c = countBook(b.id); if (b.t === "AT") at += c; else nt += c; if (c === b.ch) done++; }
+  const all = at + nt, p = all / 1189 * 100;
+  document.getElementById("pct").textContent = (p > 0 && p < 1 ? p.toFixed(1).replace(".", ",") : Math.round(p)) + "%";
+  document.getElementById("pctTxt").textContent = `${fmt(all)} de 1.189 capítulos lidos`;
+  document.getElementById("barAll").style.width = p + "%";
+  document.getElementById("atTxt").textContent = `${at}/929`;
+  document.getElementById("ntTxt").textContent = `${nt}/260`;
+  document.getElementById("barAT").style.width = at / 929 * 100 + "%";
+  document.getElementById("barNT").style.width = nt / 260 * 100 + "%";
+  document.getElementById("sToday").textContent = state.days[todayKey()] || 0;
+  document.getElementById("sStreak").textContent = streak();
+  document.getElementById("sBooks").textContent = done;
+
+  // mapa de dias
+  const heat = document.getElementById("heat"); heat.innerHTML = "";
+  const end = new Date(); const start = new Date(end); start.setDate(end.getDate() - end.getDay() - 7*15);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const k = dayKey(d), v = state.days[k] || 0, el = document.createElement("span");
+    el.dataset.l = v === 0 ? 0 : v < 3 ? 1 : v < 6 ? 2 : 3;
+    if (k === todayKey()) el.className = "today";
+    el.title = `${d.toLocaleDateString("pt-BR")}: ${v} cap.`;
+    heat.appendChild(el);
+  }
+
+  const nx = nextChapter();
+  document.getElementById("nextTxt").textContent = nx ? `${nx[0].name} ${nx[1]}` : "Bíblia concluída!";
+  document.getElementById("nextBtn").hidden = !nx;
+
+  // livros
+  const box = document.getElementById("books"); box.innerHTML = "";
+  for (const [t, g, bs] of GROUPS) {
+    if (t !== tab) continue;
+    const sec = document.createElement("div"); sec.className = "section";
+    const h = document.createElement("h3"); h.textContent = g; sec.appendChild(h);
+    for (const [id] of bs) {
+      const b = BY[id], c = countBook(id), btn = document.createElement("button");
+      btn.type = "button"; btn.className = "book" + (c === b.ch ? " complete" : "");
+      btn.innerHTML = `<span class="ab"></span><span class="nm"><span></span><span class="bar"><i style="width:${c/b.ch*100}%"></i></span></span><span class="ct num"></span>`;
+      btn.querySelector(".ab").textContent = b.ab;
+      btn.querySelector(".nm > span").textContent = b.name;
+      btn.querySelector(".ct").textContent = c === b.ch ? "Concluído" : `${c}/${b.ch}`;
+      btn.onclick = () => openBook(id);
+      sec.appendChild(btn);
+    }
+    box.appendChild(sec);
+  }
+  document.getElementById("tabAT").setAttribute("aria-selected", tab === "AT");
+  document.getElementById("tabNT").setAttribute("aria-selected", tab === "NT");
+  if (openId) renderSheet();
+}
+
+function renderSheet(){
+  const b = BY[openId], s = readSet(openId);
+  document.getElementById("sheetTitle").textContent = b.name;
+  document.getElementById("sheetSub").textContent = `${s.size} de ${b.ch} capítulo${b.ch > 1 ? "s" : ""} lido${s.size === 1 ? "" : "s"} · ${b.g}`;
+  const grid = document.getElementById("chapters"); grid.innerHTML = "";
+  for (let c = 1; c <= b.ch; c++) {
+    const el = document.createElement("button"); el.type = "button"; el.textContent = c;
+    el.setAttribute("aria-pressed", s.has(c)); el.setAttribute("aria-label", `${b.name} ${c}`);
+    el.onclick = () => toggle(openId, c);
+    grid.appendChild(el);
+  }
+  document.getElementById("allBtn").hidden = s.size === b.ch;
+  document.getElementById("clearBtn").hidden = s.size === 0;
+}
+function openBook(id){ openId = id; document.getElementById("confirmBox").hidden = true; document.getElementById("sheetActions").hidden = false; renderSheet(); sheet.hidden = false; sheetBg.hidden = false; document.getElementById("closeBtn").focus(); }
+function closeSheet(){ openId = null; sheet.hidden = true; sheetBg.hidden = true; }
+
+const sheet = document.getElementById("sheet"), sheetBg = document.getElementById("sheetBg");
+document.getElementById("closeBtn").onclick = closeSheet;
+sheetBg.onclick = closeSheet;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) closeSheet(); });
+document.getElementById("allBtn").onclick = () => markAll(openId);
+document.getElementById("clearBtn").onclick = () => { document.getElementById("sheetActions").hidden = true; document.getElementById("confirmBox").hidden = false; };
+document.getElementById("confirmNo").onclick = () => { document.getElementById("sheetActions").hidden = false; document.getElementById("confirmBox").hidden = true; };
+document.getElementById("confirmYes").onclick = () => { clearBook(openId); document.getElementById("confirmNo").onclick(); };
+document.getElementById("nextBtn").onclick = () => { const nx = nextChapter(); if (nx) toggle(nx[0].id, nx[1]); };
+document.getElementById("tabAT").onclick = () => { tab = "AT"; render(); };
+document.getElementById("tabNT").onclick = () => { tab = "NT"; render(); };
+
+function clean(d){ return { read: (d && typeof d.read === "object" && d.read) || {}, days: (d && typeof d.days === "object" && d.days) || {} }; }
+
+try { const s = localStorage.getItem(LS); if (s) state = clean(JSON.parse(s)); } catch(e) {}
+render();
+setStatus("Progresso salvo neste celular");
+
+
+// backup
+document.getElementById("expBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify({ app: "diario-leitura-biblica", v: 1, ...state }, null, 1)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "backup-leitura-biblica-" + todayKey() + ".json"; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  setStatus("Backup salvo na pasta Downloads");
+};
+document.getElementById("impBtn").onclick = () => document.getElementById("impFile").click();
+document.getElementById("impFile").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { const d = JSON.parse(await f.text()); if (!d || typeof d.read !== "object") throw 0; state = clean(d); persist(); render(); setStatus("Backup restaurado"); }
+  catch(_) { setStatus("Esse arquivo não é um backup do diário. Escolha o arquivo .json exportado pelo app."); }
+  e.target.value = "";
+};
+if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+</script>
+
+</body>
+</html>

@@ -158,6 +158,19 @@ header { display: grid; gap: 6px; }
 .empty { display: grid; justify-items: center; gap: 10px; text-align: center; }
 .empty .ic { width: 44px; height: 44px; color: var(--gilt); stroke-width: 1.3; }
 .about { margin: 0; font-family: var(--display); font-size: 1.08rem; line-height: 1.5; color: var(--ink); border-left: 2px solid var(--gilt); padding: 2px 0 2px 14px; max-width: 62ch; text-wrap: pretty; }
+.chapters button.pend { border: 2px dashed var(--gilt); }
+.chapters button.pend[aria-pressed="true"] { background: color-mix(in srgb, var(--done) 50%, var(--surface)); color: var(--ink); }
+.chapters button.pend[aria-pressed="false"] { background: var(--surface); text-decoration: line-through; text-decoration-color: var(--gilt); }
+.savebar { position: sticky; bottom: calc(-22px - env(safe-area-inset-bottom, 0px)); margin: 0 -4px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--gilt); border-radius: 14px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 18px rgb(10 14 24 / .12); z-index: 2; }
+.savebar p { margin: 0; display: grid; gap: 1px; min-width: 0; }
+.savebar b { font-size: .92rem; }
+.savebar span { font-size: .8rem; color: var(--muted); }
+.savebar.warn { border-width: 2px; animation: nudge .35s ease 2; }
+.savebar.warn b { color: var(--k-tem); }
+.savebar-btns { display: flex; gap: 8px; }
+@keyframes nudge { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-5px) } 75% { transform: translateX(5px) } }
+@media (prefers-reduced-motion: reduce) { .savebar.warn { animation: none; } }
+.next-confirm { display: flex; gap: 8px; }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -212,6 +225,10 @@ header { display: grid; gap: 6px; }
   <section class="next" id="nextBox">
     <svg class="ic ic-lamp" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 13.5h13.5c2.4 0 4.5-1 5.5-2.5-2.6-.5-4.6.2-6 1.4 M2.5 13.5c.4 2.6 3.2 4 7 4h1.5c2.6 0 4.6-1.4 5-4 M6.5 17.5l-1 3h9l-1-3 M4.6 9.8c-1.3-1.2-1.3-2.7 0-4.8 1.3 2.1 1.3 3.6 0 4.8z M4.6 11.5v-1.7"/></svg><p><small>Próximo capítulo</small><b id="nextTxt">Gênesis 1</b></p>
     <button class="btn" id="nextBtn" type="button">Marcar como lido</button>
+    <div class="next-confirm" id="nextConfirm" hidden>
+      <button class="btn" id="nextSave" type="button">Salvar</button>
+      <button class="btn ghost" id="nextCancel" type="button">Cancelar</button>
+    </div>
   </section>
 
   <nav class="tabs" role="tablist">
@@ -290,10 +307,12 @@ header { display: grid; gap: 6px; }
       <button class="btn" id="allBtn" type="button">Marcar livro inteiro</button>
       <button class="btn ghost" id="clearBtn" type="button">Desmarcar tudo</button>
     </div>
-    <div class="confirm" id="confirmBox" hidden>
-      <span>Desmarcar todos os capítulos deste livro?</span>
-      <button class="btn" id="confirmYes" type="button">Sim, desmarcar</button>
-      <button class="btn ghost" id="confirmNo" type="button">Cancelar</button>
+    <div class="savebar" id="saveBar" role="status" hidden>
+      <p><b id="saveTitle">Alterações não salvas</b><span id="saveDetail"></span></p>
+      <div class="savebar-btns">
+        <button class="btn ghost" id="discardBtn" type="button">Descartar</button>
+        <button class="btn" id="saveBtn" type="button">Salvar</button>
+      </div>
     </div>
   </div>
 </div>
@@ -324,7 +343,7 @@ const BY = Object.fromEntries(BOOKS.map(b => [b.id, b]));
 const fmt = n => n.toLocaleString("pt-BR");
 
 let state = { read: {}, days: {}, notes: {}, links: [] };
-let lnKind = "pro", armed = null, editingId = null;
+let lnKind = "pro", armed = null, editingId = null, draft = null;
 let tab = "AT", mode = "read", selCh = null, noteTimer = null, query = "", openId = null, saveTimer = null, docRef = null, saving = Promise.resolve();
 const LS = "leitura-biblica-v1";
 
@@ -355,6 +374,41 @@ function markAll(id){
   persist(); render();
 }
 function clearBook(id){ delete state.read[id]; persist(); render(); }
+// rascunho de marcação: só vale depois de Salvar
+function setRead(id, set){
+  const old = readSet(id), t = todayKey();
+  let added = 0, removed = 0;
+  for (const c of set) if (!old.has(c)) added++;
+  for (const c of old) if (!set.has(c)) removed++;
+  if (added) state.days[t] = (state.days[t] || 0) + added;
+  if (removed && state.days[t]) { state.days[t] = Math.max(0, state.days[t] - removed); if (!state.days[t]) delete state.days[t]; }
+  state.read[id] = [...set].sort((a, b) => a - b);
+  if (!state.read[id].length) delete state.read[id];
+}
+const viewSet = () => draft || readSet(openId);
+function draftDiff(){
+  if (!draft) return [0, 0];
+  const saved = readSet(openId); let add = 0, rem = 0;
+  for (const c of draft) if (!saved.has(c)) add++;
+  for (const c of saved) if (!draft.has(c)) rem++;
+  return [add, rem];
+}
+function setDraft(set){
+  draft = set; const [a, r] = draftDiff(); if (!a && !r) draft = null;
+  const bar = document.getElementById("saveBar"); bar.classList.remove("warn");
+  renderSheet();
+}
+function draftToggle(c){ const s = new Set(viewSet()); s.has(c) ? s.delete(c) : s.add(c); setDraft(s); }
+function saveDraft(){ if (!draft) return; setRead(openId, draft); draft = null; persist(); setStatus("Marcação salva"); render(); }
+function discardDraft(){ draft = null; renderSheet(); }
+function guardDraft(){
+  if (!draft) return false;
+  const bar = document.getElementById("saveBar");
+  bar.classList.remove("warn"); void bar.offsetWidth; bar.classList.add("warn");
+  document.getElementById("saveTitle").textContent = "Salve ou descarte antes de sair";
+  bar.scrollIntoView({ block: "nearest" });
+  return true;
+}
 
 const CHRONO = {
   AT: [["Origens e patriarcas", ["gn","jo"]], ["Êxodo e deserto", ["ex","lv","nm","dt"]], ["Conquista e juízes", ["js","jz","rt"]],
@@ -409,7 +463,7 @@ function render(){
 
   const nx = nextChapter();
   document.getElementById("nextTxt").textContent = nx ? `${nx[0].name} ${nx[1]}` : "Bíblia concluída!";
-  document.getElementById("nextBtn").hidden = !nx;
+  document.getElementById("nextBtn").hidden = !nx || !document.getElementById("nextConfirm").hidden;
 
   // livros
   const box = document.getElementById("books"); box.innerHTML = "";
@@ -441,10 +495,10 @@ function render(){
 }
 
 function renderSheet(){
-  const b = BY[openId], s = readSet(openId);
+  const b = BY[openId], s = viewSet(), saved = readSet(openId);
   document.getElementById("sheetTitle").textContent = b.name;
   document.getElementById("sheetAbout").textContent = ABOUT[openId] || "";
-  document.getElementById("sheetSub").textContent = `${s.size} de ${b.ch} capítulo${b.ch > 1 ? "s" : ""} lido${s.size === 1 ? "" : "s"} · ${b.g}`;
+  document.getElementById("sheetSub").textContent = `${saved.size} de ${b.ch} capítulo${b.ch > 1 ? "s" : ""} lido${saved.size === 1 ? "" : "s"} · ${b.g}`;
   const grid = document.getElementById("chapters"); grid.innerHTML = "";
   for (let c = 1; c <= b.ch; c++) {
     const el = document.createElement("button"); el.type = "button"; el.textContent = c;
@@ -454,14 +508,21 @@ function renderSheet(){
     const ks = [...new Set(linksOf(openId, c).map(l => l.k))];
     if (ks.length) { el.classList.add("has-link"); el.style.setProperty("--lk", ks.length === 1 ? `var(--k-${ks[0]})` : `linear-gradient(90deg, ${ks.map((k, i) => `var(--k-${k}) ${i/ks.length*100}% ${(i+1)/ks.length*100}%`).join(", ")})`); el.setAttribute("aria-label", el.getAttribute("aria-label") + `, ${linksOf(openId, c).length} conexão(ões)`); }
     if (mode === "note" && selCh === c) el.classList.add("sel");
-    el.onclick = () => mode === "note" ? selectChapter(c) : toggle(openId, c);
+    if (s.has(c) !== saved.has(c)) { el.classList.add("pend"); el.setAttribute("aria-label", el.getAttribute("aria-label") + ", alteração não salva"); }
+    el.onclick = () => mode === "note" ? selectChapter(c) : draftToggle(c);
     grid.appendChild(el);
   }
   document.getElementById("allBtn").hidden = s.size === b.ch;
   document.getElementById("clearBtn").hidden = s.size === 0;
+  const bar = document.getElementById("saveBar"), [da, dr] = draftDiff();
+  bar.hidden = !draft;
+  if (draft) {
+    if (!bar.classList.contains("warn")) document.getElementById("saveTitle").textContent = "Alterações não salvas";
+    document.getElementById("saveDetail").textContent = [da ? `${da} para marcar como lido${da > 1 ? "s" : ""}` : "", dr ? `${dr} para desmarcar` : ""].filter(Boolean).join(" · ");
+  }
   document.getElementById("modeRead").setAttribute("aria-pressed", mode === "read");
   document.getElementById("modeNote").setAttribute("aria-pressed", mode === "note");
-  document.getElementById("modeHint").textContent = mode === "note" ? "Toque num capítulo para escrever anotações e criar conexões. Ponto dourado: anotação. Faixa colorida: conexão." : "Toque num capítulo para marcar ou desmarcar. Ponto dourado: anotação. Faixa colorida: conexão.";
+  document.getElementById("modeHint").textContent = mode === "note" ? "Toque num capítulo para escrever anotações e criar conexões. Ponto dourado: anotação. Faixa colorida: conexão." : "Toque nos capítulos para marcar ou desmarcar e depois em Salvar. Ponto dourado: anotação. Faixa colorida: conexão.";
   const ed = document.getElementById("editor");
   ed.hidden = !(mode === "note" && selCh);
   if (!ed.hidden) {
@@ -486,7 +547,7 @@ const KINDS = [["pro","Profecia e cumprimento"],["par","Texto paralelo"],["cit",
 const KNAME = Object.fromEntries(KINDS);
 const linksOf = (id, c) => state.links.filter(l => (l.a.b === id && l.a.c === c) || (l.b.b === id && l.b.c === c));
 const refTxt = r => `${BY[r.b].name} ${r.c}${r.v ? ":" + r.v : ""}`;
-function goTo(id, c){ flushNote(); if (openId !== id) openBook(id); mode = "note"; selectChapter(c); }
+function goTo(id, c){ flushNote(); if (openId !== id && openBook(id) === false) return; mode = "note"; selectChapter(c); }
 function renderLinks(){
   const box = document.getElementById("lnList"); box.innerHTML = "";
   const ls = linksOf(openId, selCh);
@@ -625,18 +686,33 @@ function renderAllNotes(box){
   inp.oninput = () => { query = inp.value; fill(); };
   fill(); wrap.append(inp, list); box.appendChild(wrap);
 }
-function openBook(id){ flushNote(); openId = id; selCh = null; mode = "read"; document.getElementById("confirmBox").hidden = true; document.getElementById("sheetActions").hidden = false; renderSheet(); sheet.hidden = false; sheetBg.hidden = false; document.getElementById("closeBtn").focus(); }
-function closeSheet(){ flushNote(); openId = null; selCh = null; render(); sheet.hidden = true; sheetBg.hidden = true; }
+function openBook(id){ if (openId && openId !== id && guardDraft()) return false; flushNote(); draft = null; openId = id; selCh = null; mode = "read"; document.getElementById("saveBar").classList.remove("warn"); renderSheet(); sheet.hidden = false; sheetBg.hidden = false; document.getElementById("closeBtn").focus(); }
+function closeSheet(){ if (guardDraft()) return; flushNote(); openId = null; selCh = null; render(); sheet.hidden = true; sheetBg.hidden = true; }
 
 const sheet = document.getElementById("sheet"), sheetBg = document.getElementById("sheetBg");
 document.getElementById("closeBtn").onclick = closeSheet;
 sheetBg.onclick = closeSheet;
 document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) closeSheet(); });
-document.getElementById("allBtn").onclick = () => markAll(openId);
-document.getElementById("clearBtn").onclick = () => { document.getElementById("sheetActions").hidden = true; document.getElementById("confirmBox").hidden = false; };
-document.getElementById("confirmNo").onclick = () => { document.getElementById("sheetActions").hidden = false; document.getElementById("confirmBox").hidden = true; };
-document.getElementById("confirmYes").onclick = () => { clearBook(openId); document.getElementById("confirmNo").onclick(); };
-document.getElementById("nextBtn").onclick = () => { const nx = nextChapter(); if (nx) toggle(nx[0].id, nx[1]); };
+document.getElementById("allBtn").onclick = () => setDraft(new Set(Array.from({ length: BY[openId].ch }, (_, i) => i + 1)));
+document.getElementById("clearBtn").onclick = () => setDraft(new Set());
+document.getElementById("saveBtn").onclick = saveDraft;
+document.getElementById("discardBtn").onclick = discardDraft;
+let nextPending = null;
+function showNextConfirm(on){
+  document.getElementById("nextBtn").hidden = on || !nextChapter();
+  document.getElementById("nextConfirm").hidden = !on;
+}
+document.getElementById("nextBtn").onclick = () => {
+  nextPending = nextChapter(); if (!nextPending) return;
+  document.getElementById("nextTxt").textContent = `${nextPending[0].name} ${nextPending[1]}`;
+  document.querySelector("#nextBox small").textContent = "Confirmar leitura de";
+  showNextConfirm(true); document.getElementById("nextSave").focus();
+};
+document.getElementById("nextCancel").onclick = () => { nextPending = null; document.querySelector("#nextBox small").textContent = "Próximo capítulo"; showNextConfirm(false); };
+document.getElementById("nextSave").onclick = () => {
+  if (nextPending) { const [b, c] = nextPending, s = readSet(b.id); s.add(c); setRead(b.id, s); persist(); setStatus("Marcação salva"); }
+  document.getElementById("nextCancel").onclick(); render();
+};
 document.getElementById("tabAT").onclick = () => { tab = "AT"; render(); };
 document.getElementById("tabNT").onclick = () => { tab = "NT"; render(); };
 const setOrder = o => { order = o; try { localStorage.setItem("leitura-biblica-ordem", o); } catch(e) {} render(); };
@@ -652,7 +728,7 @@ document.getElementById("edText").addEventListener("input", () => {
 document.getElementById("edText").addEventListener("blur", flushNote);
 addEventListener("pagehide", flushNote);
 document.addEventListener("visibilitychange", () => { if (document.hidden) flushNote(); });
-document.getElementById("edRead").onclick = () => { flushNote(); toggle(openId, selCh); };
+document.getElementById("edRead").onclick = () => { flushNote(); draftToggle(selCh); };
 document.getElementById("edDel").onclick = () => { document.getElementById("edConfirm").hidden = false; };
 document.getElementById("edDelNo").onclick = () => { document.getElementById("edConfirm").hidden = true; };
 document.getElementById("edDelYes").onclick = () => {

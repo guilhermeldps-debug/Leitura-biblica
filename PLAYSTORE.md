@@ -48,14 +48,9 @@ O Leitura Bíblica é um diário de leitura simples e bonito para quem quer ler 
 • Busque em todas as suas anotações e conexões.
 • Um pequeno resumo do assunto de cada livro ajuda a contextualizar a leitura.
 
-💬 TIRE SUAS DÚVIDAS
-• Painel "Perguntas", aberto pelo botão no topo: pergunte sobre a Bíblia e a fé cristã e receba respostas de uma inteligência artificial que mostram, separadamente e bem identificadas, a visão evangélica e a visão católica, além do que as duas têm em comum, com as referências bíblicas.
-• Pergunte direto de um livro para entender a mensagem dele.
-• As respostas são geradas por IA e podem conter erros: confira na Bíblia e converse com o pastor ou o padre da sua comunidade.
-
 🔒 PRIVADO E OFFLINE
 • Sem cadastro, sem anúncios e sem rastreamento.
-• Seu progresso, suas anotações e suas conexões ficam somente no seu celular. Só as perguntas que você faz no painel "Perguntas" são enviadas para serem respondidas pela IA, sem identificar você.
+• Seu progresso, suas anotações e suas conexões ficam somente no seu celular.
 • Funciona sem internet.
 • Salve um arquivo de backup e restaure quando trocar de aparelho.
 
@@ -81,7 +76,7 @@ Observação: o app não traz o texto bíblico. Use-o junto com a sua Bíblia pr
 |---|---|
 | Ícone 512×512 | `loja/icone-512.png` |
 | Gráfico de destaque 1024×500 | `loja/feature-graphic-1024x500.png` |
-| Capturas de tela do celular (mínimo 2) | `screenshots/painel.png`, `screenshots/livro.png`, `screenshots/conexoes.png`, `screenshots/perguntas.png` (1080×1920) |
+| Capturas de tela do celular (mínimo 2) | `screenshots/painel.png`, `screenshots/livro.png`, `screenshots/conexoes.png` (1080×1920) |
 
 As capturas usam dados de exemplo. Se preferir, tire capturas no seu próprio celular, que já mostram as fontes exatamente como no app.
 
@@ -153,12 +148,7 @@ Alternativa: usar um domínio próprio (ex.: `leiturabiblica.com.br`) no GitHub 
    - **Política de privacidade:** `https://guilhermeldps-debug.github.io/Leitura-biblica/privacidade.html`
    - **Anúncios:** não contém anúncios.
    - **Acesso ao app:** todo o app está disponível sem login.
-   - **Segurança dos dados:** progresso, anotações e conexões ficam só no aparelho e não são coletados. O painel **Perguntas** envia o texto das perguntas a um servidor para gerar a resposta, então declare:
-     - **Coleta de dados: Sim** → tipo **Atividade no app → Outros conteúdos gerados pelo usuário**.
-     - **Uso:** Funcionalidade do app. **Opcional** (o usuário escolhe se quer usar o chat). **Processado de forma temporária**: as conversas não são guardadas; só respostas denunciadas ficam 90 dias para revisão.
-     - **Compartilhamento: Não** (Cloudflare e Anthropic atuam como prestadores de serviço, que o Google não considera compartilhamento).
-     - **Criptografia em trânsito: Sim** (HTTPS). **Exclusão:** não há conta nem dados guardados; informe que o usuário pode limpar a conversa no app.
-   - **Conteúdo gerado por IA:** o app cumpre a política do Google Play para IA generativa: cada resposta tem o botão **Denunciar resposta**, que envia a denúncia ao desenvolvedor, e o app avisa que as respostas são geradas por IA.
+   - **Segurança dos dados:** o app **não coleta nem compartilha** dados de usuário; os dados ficam só no aparelho.
    - **Classificação de conteúdo:** responda ao questionário (categoria Referência/Educação; nada de violência ou conteúdo sensível).
    - **Público-alvo:** escolher faixas a partir de 13 anos evita as exigências extras do programa para famílias. Inclua menores de 13 só se quiser esse público.
    - **App de notícias**, **Apps governamentais**, **Recursos financeiros**, **Saúde:** responda "não".

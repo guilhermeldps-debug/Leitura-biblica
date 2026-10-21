@@ -176,79 +176,6 @@ header { display: grid; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { .savebar.warn { animation: none; } }
 .next-confirm { display: flex; gap: 8px; }
 .plink { color: var(--muted); }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.ask { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--accent); }
-.ask .ic { width: 16px; height: 16px; }
-.chat-note { margin: 0; font-size: .8rem; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-.chat-log { display: grid; gap: 12px; }
-.chat-empty { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 14px 4px 4px; color: var(--muted); }
-.chat-empty .ic { width: 44px; height: 44px; color: var(--gilt); stroke-width: 1.3; }
-.chat-empty h3 { margin: 0; font-family: var(--display); font-size: 1.35rem; color: var(--ink); }
-.chat-empty p { margin: 0; max-width: 46ch; }
-.sugs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-.sug { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 12px; font-size: .85rem; text-align: left; }
-.msg { display: grid; gap: 6px; max-width: 92%; min-width: 0; }
-.msg.user { justify-self: end; }
-.msg .bubble { border-radius: 14px; padding: 10px 14px; line-height: 1.55; overflow-wrap: anywhere; min-width: 0; }
-.msg.user .bubble { background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; white-space: pre-wrap; }
-.msg.bot .bubble { background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
-.msg.bot .bubble p { margin: 0 0 .6em; }
-.msg.bot .bubble p:last-child, .msg.bot .bubble ul:last-child, .msg.bot .bubble ol:last-child { margin-bottom: 0; }
-.msg.bot .bubble ul, .msg.bot .bubble ol { margin: 0 0 .6em; padding-left: 1.2em; }
-.msg.bot .bubble strong { font-weight: 700; }
-.msg.err .bubble { background: var(--surface); border: 1px dashed var(--k-tem); color: var(--ink); }
-.msg-acts { display: flex; gap: 14px; flex-wrap: wrap; }
-.tr { --kc: var(--muted); border-left: 3px solid var(--kc); padding: 2px 0 2px 12px; margin: 0 0 .9em; }
-.tr:last-child { margin-bottom: 0; }
-.tr-ev { --kc: var(--k-par); } .tr-ca { --kc: var(--k-tem); } .tr-co { --kc: var(--k-cit); }
-.tr-h { margin: 0 0 .35em !important; font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--kc); }
-.trad-key { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; font-size: .76rem; color: var(--muted); }
-.trad-key span { display: inline-flex; align-items: center; gap: 6px; }
-.trad-key i { width: 3px; height: 14px; border-radius: 2px; background: var(--kc); }
-.dots { display: inline-flex; gap: 4px; padding: 4px 0; }
-.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite both; }
-.dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
-@keyframes blink { 0%, 80%, 100% { opacity: .25 } 40% { opacity: 1 } }
-@media (prefers-reduced-motion: reduce) { .dots i { animation: none; opacity: .6; } }
-.report { display: grid; gap: 8px; border: 1px dashed var(--line); border-radius: 10px; padding: 10px; }
-.report select { border: 1px solid var(--line); border-radius: 8px; padding: 8px; background: var(--surface); color: var(--ink); font: inherit; }
-.chat-ctx { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .82rem; color: var(--muted); background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; }
-.chat-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
-.chat-form textarea { width: 100%; box-sizing: border-box; resize: none; min-height: 48px; max-height: 160px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--surface); color: var(--ink); font: inherit; line-height: 1.4; }
-.chat-form textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
-.chat-form .btn { height: 48px; }
-.chat-form .btn:disabled { opacity: .5; }
-.chat-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .78rem; color: var(--muted); min-height: 1.2em; }
-/* Painel lateral do chat: gaveta por cima no celular, fixo ao lado em telas largas */
-.wrap { padding-bottom: 96px; }
-.chat-fab { position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 15; display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: var(--bg); border: 0; border-radius: 999px; padding: 12px 20px 12px 16px; font-weight: 700; font-size: .95rem; box-shadow: 0 8px 22px rgb(10 14 24 / .28); }
-.chat-fab .ic { width: 22px; height: 22px; }
-html.chat-open .chat-fab, .chat-fab.away { display: none; }
-.chat-top { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); border-radius: 999px; padding: 6px 14px 6px 10px; font-size: .82rem; font-weight: 700; }
-.chat-top .ic { width: 18px; height: 18px; }
-@media (max-width: 599px) {
-  .chat-fab { width: 56px; height: 56px; padding: 0; justify-content: center; }
-  .chat-fab span { display: none; }
-  .chat-fab .ic { width: 26px; height: 26px; }
-}
-.chat-scrim { position: fixed; inset: 0; background: rgb(10 14 24 / .45); z-index: 29; }
-.chat-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 100%; max-width: 440px; z-index: 30; display: flex; flex-direction: column; background: var(--bg); border-left: 1px solid var(--line); box-shadow: -14px 0 36px rgb(10 14 24 / .2); transform: translateX(100%); visibility: hidden; transition: transform .26s ease, visibility 0s linear .26s; padding-top: env(safe-area-inset-top, 0px); padding-right: env(safe-area-inset-right, 0px); }
-html.chat-open .chat-panel { transform: none; visibility: visible; transition: transform .26s ease, visibility 0s; }
-.chat-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
-.chat-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.chat-title .ic { width: 30px; height: 30px; color: var(--gilt); stroke-width: 1.4; }
-.chat-title h2 { font-size: 1.35rem; line-height: 1.1; }
-.chat-title p { margin: 2px 0 0; font-size: .78rem; color: var(--muted); }
-.chat-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 14px 16px; display: grid; align-content: start; gap: 12px; }
-.chat-dock { display: grid; gap: 8px; border-top: 1px solid var(--line); background: var(--surface); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
-html.chat-lock, html.chat-lock body { overflow: hidden; }
-@media (min-width: 1100px) {
-  html.chat-open body { padding-right: 440px; }
-  html.chat-open .chat-panel { box-shadow: none; }
-  html.chat-open .sheet, html.chat-open .sheet-bg { right: 440px; }
-  .chat-scrim { display: none !important; }
-}
-@media (prefers-reduced-motion: reduce) { .chat-panel, html.chat-open .chat-panel { transition: none; } }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -276,7 +203,6 @@ html.chat-lock, html.chat-lock body { overflow: hidden; }
         <button type="button" data-t="light" id="thLight">Claro</button>
         <button type="button" data-t="dark" id="thDark">Escuro</button>
       </div>
-      <button class="chat-top" id="chatTop" type="button" aria-controls="chatPanel"><span>Perguntar</span></button>
     </div>
     <h1>Diário de Leitura Bíblica</h1>
     <div class="status" id="status">Progresso salvo neste celular</div>
@@ -337,27 +263,6 @@ html.chat-lock, html.chat-lock body { overflow: hidden; }
   </section>
 </div>
 
-<button class="chat-fab" id="chatFab" type="button" aria-controls="chatPanel" aria-expanded="false" aria-label="Perguntas sobre a Bíblia" title="Perguntas sobre a Bíblia"><span>Perguntar</span></button>
-<div class="chat-scrim" id="chatScrim" hidden></div>
-<aside class="chat-panel" id="chatPanel" aria-label="Perguntas sobre a Bíblia" aria-hidden="true" inert>
-  <header class="chat-head">
-    <div class="chat-title" id="chatTitle"><div><h2 id="chatH">Perguntas</h2><p>Dúvidas sobre a Bíblia e a fé cristã</p></div></div>
-    <button class="close" id="chatClose" type="button" aria-label="Fechar perguntas">×</button>
-  </header>
-  <div class="chat-body" id="chatBody">
-    <p class="chat-note">Respostas geradas por inteligência artificial, mostrando separadamente a visão evangélica e a católica. Podem conter erros: confira sempre na Bíblia e converse com o pastor ou o padre da sua comunidade.</p>
-    <div class="chat-log" id="chatLog" aria-live="polite"></div>
-  </div>
-  <div class="chat-dock">
-    <div class="chat-ctx" id="chatCtx" hidden><span id="chatCtxTxt"></span><button class="link-x" id="chatCtxX" type="button">Remover</button></div>
-    <form class="chat-form" id="chatForm" novalidate>
-      <label for="chatInput" class="sr">Sua pergunta</label>
-      <textarea id="chatInput" rows="2" maxlength="1500" placeholder="Escreva sua dúvida sobre a Bíblia ou a fé cristã"></textarea>
-      <button class="btn" id="chatSend" type="submit">Enviar</button>
-    </form>
-    <div class="chat-foot"><span id="chatInfo"></span><button class="link-x" id="chatClear" type="button" hidden>Limpar conversa</button></div>
-  </div>
-</aside>
 <div class="sheet-bg" id="sheetBg" hidden></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
   <div class="sheet-in">
@@ -366,7 +271,6 @@ html.chat-lock, html.chat-lock body { overflow: hidden; }
       <button class="close" id="closeBtn" type="button" aria-label="Fechar">×</button>
     </div>
     <p class="about" id="sheetAbout"></p>
-    <button class="chip ask" id="askBook" type="button">Perguntar sobre este livro</button>
     <div class="mode" role="group" aria-label="Ao tocar num capítulo">
       <button type="button" id="modeRead" aria-pressed="true">Marcar lido</button>
       <button type="button" id="modeNote" aria-pressed="false">Anotar</button>
@@ -794,11 +698,7 @@ function closeSheet(){ if (guardDraft()) return; flushNote(); openId = null; sel
 const sheet = document.getElementById("sheet"), sheetBg = document.getElementById("sheetBg");
 document.getElementById("closeBtn").onclick = closeSheet;
 sheetBg.onclick = closeSheet;
-document.addEventListener("keydown", e => {
-  if (e.key !== "Escape") return;
-  if (typeof chatOpen !== "undefined" && chatOpen && !isDocked()) closeChat();
-  else if (openId) closeSheet();
-});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && openId) closeSheet(); });
 document.getElementById("allBtn").onclick = () => setDraft(new Set(Array.from({ length: BY[openId].ch }, (_, i) => i + 1)));
 document.getElementById("clearBtn").onclick = () => setDraft(new Set());
 document.getElementById("saveBtn").onclick = saveDraft;
@@ -825,183 +725,6 @@ const setOrder = o => { order = o; try { localStorage.setItem("leitura-biblica-o
 document.getElementById("ordBible").onclick = () => setOrder("bible");
 document.getElementById("ordChrono").onclick = () => setOrder("chrono");
 document.getElementById("tabNotes").onclick = () => { tab = "NOTAS"; render(); };
-
-// ===== Perguntas (chat com IA) =====
-// Endereço do servidor do chat (Cloudflare Worker). Vazio = chat ainda não ligado.
-const CHAT_URL = "";
-const LSC = "leitura-biblica-chat";
-const SUGS = ["O que é a Trindade?", "O que significa ser salvo pela graça?", "Por que Jesus precisou morrer na cruz?", "Por que católicos e evangélicos têm Bíblias diferentes?", "Qual a diferença entre o Antigo e o Novo Testamento?", "Como posso orar melhor?"];
-let chat = { msgs: [], ctx: "" }, chatBusy = false, chatErr = null, clearArmed = false, reportIdx = null;
-try { const c = JSON.parse(localStorage.getItem(LSC) || "null"); if (c && Array.isArray(c.msgs)) chat = { msgs: c.msgs.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-40), ctx: typeof c.ctx === "string" ? c.ctx : "" }; } catch(e) {}
-function saveChat(){ try { localStorage.setItem(LSC, JSON.stringify({ msgs: chat.msgs.slice(-40), ctx: chat.ctx })); } catch(e) {} }
-function esc(t){ return t.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
-function inline(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>"); }
-// Seções da resposta: cada tradição ganha um bloco com nome e cor
-const TRAD = [
-  [/evang[eé]l|protestant/i, "ev", "Visão evangélica"],
-  [/cat[oó]lic/i, "ca", "Visão católica"],
-  [/comum|ambas|concordam/i, "co", "Em comum"]
-];
-function tradOf(title){ for (const [re, k, label] of TRAD) if (re.test(title)) return [k, label]; return null; }
-function mdLite(text){
-  const out = []; let list = null, sec = false;
-  const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
-  const openSec = (k, label) => { close(); if (sec) out.push("</div>"); out.push(`<div class="tr tr-${k}"><p class="tr-h">${label}</p>`); sec = true; };
-  for (const raw of text.replace(/\r/g, "").split(/\n/)) {
-    const line = raw.trim();
-    let m;
-    if (!line) { close(); continue; }
-    if ((m = line.match(/^[-*•]\s+(.*)/))) { if (list !== "ul") { close(); out.push("<ul>"); list = "ul"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
-    if ((m = line.match(/^\d+[.)]\s+(.*)/))) { if (list !== "ol") { close(); out.push("<ol>"); list = "ol"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
-    close();
-    const head = (m = line.match(/^#{1,4}\s+(.*)/)) ? m[1].replace(/\*\*/g, "") : (m = line.match(/^\*\*([^*]{2,60})\*\*:?$/)) ? m[1] : null;
-    if (head !== null) {
-      const t = head.length <= 40 ? tradOf(head) : null;
-      if (t) { openSec(t[0], t[1]); continue; }
-      out.push(`<p><strong>${inline(head)}</strong></p>`); continue;
-    }
-    out.push(`<p>${inline(line)}</p>`);
-  }
-  close(); if (sec) out.push("</div>"); return out.join("");
-}
-function chatBubble(role, html, cls){
-  const d = document.createElement("div"); d.className = "msg " + (cls || (role === "user" ? "user" : "bot"));
-  const b = document.createElement("div"); b.className = "bubble";
-  if (role === "user") b.textContent = html; else b.innerHTML = html;
-  d.appendChild(b); return d;
-}
-function renderChat(){
-  const log = document.getElementById("chatLog"); log.innerHTML = "";
-  if (!chat.msgs.length && !chatBusy && !chatErr) {
-    const e = document.createElement("div"); e.className = "chat-empty";
-    e.innerHTML = icon("dove") + "<h3>Tire suas dúvidas</h3><p>Pergunte sobre a Bíblia e a fé cristã. Cada resposta mostra o que evangélicos e católicos creem em comum e, separadas, a visão de cada tradição, com as passagens bíblicas.</p>"
-      + '<div class="trad-key" aria-hidden="true"><span class="tr-co"><i></i>Em comum</span><span class="tr-ev"><i></i>Visão evangélica</span><span class="tr-ca"><i></i>Visão católica</span></div>';
-    const sg = document.createElement("div"); sg.className = "sugs";
-    for (const q of SUGS) { const b = document.createElement("button"); b.type = "button"; b.className = "sug"; b.textContent = q; b.onclick = () => sendChat(q); sg.appendChild(b); }
-    e.appendChild(sg); log.appendChild(e);
-  }
-  chat.msgs.forEach((m, i) => {
-    if (m.role === "user") { log.appendChild(chatBubble("user", m.content)); return; }
-    const d = chatBubble("assistant", mdLite(m.content));
-    const acts = document.createElement("div"); acts.className = "msg-acts";
-    const cp = document.createElement("button"); cp.type = "button"; cp.className = "link-x"; cp.textContent = "Copiar";
-    cp.onclick = async () => { try { await navigator.clipboard.writeText(m.content); cp.textContent = "Copiado"; } catch(e) { cp.textContent = "Não foi possível copiar"; } setTimeout(() => cp.textContent = "Copiar", 1800); };
-    const rp = document.createElement("button"); rp.type = "button"; rp.className = "link-x"; rp.textContent = m.reported ? "Denunciada" : "Denunciar resposta"; rp.disabled = !!m.reported;
-    rp.onclick = () => { reportIdx = reportIdx === i ? null : i; renderChat(); };
-    acts.append(cp, rp); d.appendChild(acts);
-    if (reportIdx === i) d.appendChild(reportForm(i));
-    log.appendChild(d);
-  });
-  if (chatBusy) { const d = chatBubble("assistant", '<span class="dots" aria-label="Escrevendo resposta"><i></i><i></i><i></i></span>'); log.appendChild(d); }
-  if (chatErr) {
-    const d = chatBubble("assistant", "", "msg err"); d.querySelector(".bubble").textContent = chatErr.msg;
-    if (chatErr.retry) { const a = document.createElement("div"); a.className = "msg-acts"; const r = document.createElement("button"); r.type = "button"; r.className = "link-x"; r.textContent = "Tentar de novo"; r.onclick = () => { chatErr = null; askAI(); }; a.appendChild(r); d.appendChild(a); }
-    log.appendChild(d);
-  }
-  document.getElementById("chatSend").disabled = chatBusy;
-  const cl = document.getElementById("chatClear"); cl.hidden = !chat.msgs.length; cl.textContent = clearArmed ? "Confirmar: apagar conversa" : "Limpar conversa";
-  document.getElementById("chatCtx").hidden = !chat.ctx;
-  document.getElementById("chatCtxTxt").textContent = chat.ctx ? `Contexto: ${chat.ctx}` : "";
-  document.getElementById("chatInfo").textContent = CHAT_URL ? "A conversa fica salva só neste celular." : "";
-}
-function reportForm(i){
-  const f = document.createElement("form"); f.className = "report";
-  f.innerHTML = '<label class="hint" for="rpReason">O que há de errado com esta resposta?</label><select id="rpReason"><option>Informação bíblica incorreta</option><option>Conteúdo ofensivo ou inadequado</option><option>Fora do tema</option><option>Outro problema</option></select><div class="sheet-actions"><button class="btn" type="submit">Enviar denúncia</button><button class="btn ghost" type="button" id="rpCancel">Cancelar</button></div>';
-  f.querySelector("#rpCancel").onclick = () => { reportIdx = null; renderChat(); };
-  f.onsubmit = async e => {
-    e.preventDefault();
-    const q = [...chat.msgs.slice(0, i)].reverse().find(m => m.role === "user");
-    try {
-      const r = await fetch(CHAT_URL.replace(/\/$/, "") + "/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason: f.querySelector("#rpReason").value, question: q ? q.content : "", answer: chat.msgs[i].content }) });
-      if (!r.ok) throw 0;
-      chat.msgs[i].reported = true; saveChat(); reportIdx = null; renderChat();
-    } catch(_) { f.querySelector(".hint").textContent = "Não foi possível enviar agora. Verifique a internet e tente de novo."; }
-  };
-  return f;
-}
-function scrollChatEnd(){ const b = document.getElementById("chatBody"); b.scrollTo({ top: b.scrollHeight, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
-async function askAI(){
-  if (!CHAT_URL) { chatErr = { msg: "O chat ainda não foi ligado ao servidor. Assim que for configurado, as respostas aparecem aqui.", retry: false }; renderChat(); return; }
-  if (!navigator.onLine) { chatErr = { msg: "Sem internet. As perguntas precisam de conexão para serem respondidas.", retry: true }; renderChat(); return; }
-  chatBusy = true; chatErr = null; renderChat(); scrollChatEnd();
-  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 45000);
-  try {
-    const r = await fetch(CHAT_URL, { method: "POST", headers: { "Content-Type": "application/json" }, signal: ctl.signal,
-      body: JSON.stringify({ messages: chat.msgs.slice(-16).map(m => ({ role: m.role, content: m.content })), context: chat.ctx || undefined }) });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok || !data.reply) throw { msg: data.message || "Não foi possível responder agora. Tente de novo em instantes.", retry: r.status !== 403 && r.status !== 429 };
-    chat.msgs.push({ role: "assistant", content: data.reply }); saveChat();
-  } catch(e) {
-    chatErr = e && e.msg ? e : { msg: e && e.name === "AbortError" ? "A resposta demorou demais. Tente de novo." : "Não foi possível falar com o servidor. Verifique a internet e tente de novo.", retry: true };
-  } finally { clearTimeout(timer); chatBusy = false; renderChat(); scrollChatEnd(); }
-}
-function sendChat(text){
-  const q = (text || "").trim(); if (!q || chatBusy) return;
-  clearArmed = false; reportIdx = null; chatErr = null;
-  chat.msgs.push({ role: "user", content: q.slice(0, 1500) }); saveChat();
-  const inp = document.getElementById("chatInput"); inp.value = ""; inp.style.height = "";
-  askAI();
-}
-document.getElementById("chatForm").addEventListener("submit", e => { e.preventDefault(); sendChat(document.getElementById("chatInput").value); });
-document.getElementById("chatInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer: coarse)").matches) { e.preventDefault(); sendChat(e.target.value); } });
-document.getElementById("chatInput").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px"; });
-document.getElementById("chatClear").onclick = () => { if (!clearArmed) { clearArmed = true; renderChat(); return; } chat = { msgs: [], ctx: "" }; clearArmed = false; chatErr = null; reportIdx = null; saveChat(); renderChat(); };
-document.getElementById("chatCtxX").onclick = () => { chat.ctx = ""; saveChat(); renderChat(); };
-document.getElementById("askBook").onclick = () => {
-  const b = BY[openId]; if (!b) return;
-  if (guardDraft()) return;
-  if (!isDocked()) closeSheet();
-  chat.ctx = `o livro de ${b.name}`; saveChat();
-  openChat(false);
-  const inp = document.getElementById("chatInput"); inp.value = `Qual é a mensagem principal de ${b.name} e como ela aponta para Cristo?`; inp.focus();
-};
-
-// abrir e fechar o painel lateral
-const PANEL_KEY = "leitura-biblica-chat-painel";
-const dockMq = matchMedia("(min-width: 1100px)");
-const isDocked = () => dockMq.matches;
-let chatOpen = false;
-ICONS.chat = "M4.5 4.5h15a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5H10l-4.5 3.5V16.5h-1A1.5 1.5 0 0 1 3 15V6a1.5 1.5 0 0 1 1.5-1.5z M12 7v7 M9.5 9.5h5";
-document.getElementById("chatFab").insertAdjacentHTML("afterbegin", icon("chat"));
-document.getElementById("chatTop").insertAdjacentHTML("afterbegin", icon("chat"));
-document.getElementById("chatTop").onclick = () => openChat();
-// o botão flutuante só aparece quando o botão do topo sai da tela
-(() => {
-  const fab = document.getElementById("chatFab");
-  fab.classList.add("away");
-  if (!("IntersectionObserver" in window)) { fab.classList.remove("away"); return; }
-  new IntersectionObserver(([e]) => fab.classList.toggle("away", e.isIntersecting)).observe(document.getElementById("chatTop"));
-})();
-document.getElementById("chatTitle").insertAdjacentHTML("afterbegin", icon("dove"));
-function setChatOpen(open){
-  chatOpen = open;
-  const root = document.documentElement, panel = document.getElementById("chatPanel");
-  root.classList.toggle("chat-open", open);
-  root.classList.toggle("chat-lock", open && !isDocked());
-  panel.inert = !open; panel.setAttribute("aria-hidden", String(!open));
-  document.getElementById("chatScrim").hidden = !(open && !isDocked());
-  document.getElementById("chatFab").setAttribute("aria-expanded", String(open));
-  if (isDocked()) { try { localStorage.setItem(PANEL_KEY, open ? "1" : "0"); } catch(e) {} }
-}
-function openChat(focus = true){
-  if (chatOpen) { renderChat(); return; }
-  setChatOpen(true); renderChat();
-  const b = document.getElementById("chatBody"); b.scrollTop = b.scrollHeight;
-  if (!isDocked()) { try { history.pushState({ chat: 1 }, ""); } catch(e) {} }
-  if (focus) (isDocked() ? document.getElementById("chatInput") : document.getElementById("chatClose")).focus();
-}
-function closeChat(){
-  if (!chatOpen) return;
-  setChatOpen(false);
-  if (history.state && history.state.chat) { try { history.back(); } catch(e) {} }
-  document.getElementById("chatFab").focus();
-}
-addEventListener("popstate", () => { if (chatOpen && !isDocked()) setChatOpen(false); });
-dockMq.addEventListener("change", () => { if (chatOpen) setChatOpen(true); });
-document.getElementById("chatFab").onclick = () => openChat();
-document.getElementById("chatClose").onclick = closeChat;
-document.getElementById("chatScrim").onclick = closeChat;
-try { if (isDocked() && localStorage.getItem(PANEL_KEY) === "1") openChat(false); } catch(e) {}
 document.getElementById("modeRead").onclick = () => { flushNote(); mode = "read"; renderSheet(); };
 document.getElementById("modeNote").onclick = () => { mode = "note"; renderSheet(); };
 document.getElementById("edText").addEventListener("input", () => {
@@ -1022,6 +745,8 @@ document.getElementById("edDelYes").onclick = () => {
 function clean(d){ const o = k => (d && typeof d[k] === "object" && d[k]) || {}; return { read: o("read"), days: o("days"), notes: o("notes"), links: Array.isArray(d && d.links) ? d.links.filter(l => l && l.a && l.b && BY[l.a.b] && BY[l.b.b]) : [] }; }
 
 try { const s = localStorage.getItem(LS); if (s) state = clean(JSON.parse(s)); } catch(e) {}
+// remove a conversa do chat de IA de versões anteriores
+try { localStorage.removeItem("leitura-biblica-chat"); localStorage.removeItem("leitura-biblica-chat-painel"); } catch(e) {}
 render();
 setStatus("Progresso salvo neste celular");
 

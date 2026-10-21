@@ -141,7 +141,7 @@ Alternativa: usar um domínio próprio (ex.: `leiturabiblica.com.br`) no GitHub 
 4. Envie o `.aab` gerado pelo PWABuilder. Nome da versão: `1.0.0`. Notas: "Primeira versão".
 5. Pegue os fingerprints e complete o assetlinks.json:
    - **Chave de assinatura do app:** Play Console → **Teste e lançamento → Configuração → Integridade do app → Assinatura de apps** → copie o **SHA-256** do "Certificado da chave de assinatura do app".
-   - **Chave de upload:** está no `assetlinks.json` (ou no `signing-key-info.txt`) do ZIP do PWABuilder.
+   - **Chave de upload:** já preenchida no `.well-known/assetlinks.json` deste repositório (`4D:C2:B0:EF:…:AA:76`, vinda do ZIP do PWABuilder).
    - Coloque os dois no lugar dos textos `COLE_AQUI_...` e publique o arquivo na raiz, como explicado na etapa 2.
    - Confira em https://developers.google.com/digital-asset-links/tools/generator (Host: `guilhermeldps-debug.github.io`, pacote e SHA-256 da chave de assinatura do app).
 6. Preencha o **Conteúdo do app** (menu "Política"):

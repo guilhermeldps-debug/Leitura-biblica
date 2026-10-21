@@ -176,6 +176,43 @@ header { display: grid; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { .savebar.warn { animation: none; } }
 .next-confirm { display: flex; gap: 8px; }
 .plink { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.ask { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--accent); }
+.ask .ic { width: 16px; height: 16px; }
+.chat { display: grid; gap: 12px; padding-top: 10px; }
+.chat-note { margin: 0; font-size: .8rem; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.chat-log { display: grid; gap: 12px; }
+.chat-empty { display: grid; justify-items: center; text-align: center; gap: 10px; padding: 14px 4px 4px; color: var(--muted); }
+.chat-empty .ic { width: 44px; height: 44px; color: var(--gilt); stroke-width: 1.3; }
+.chat-empty h3 { margin: 0; font-family: var(--display); font-size: 1.35rem; color: var(--ink); }
+.chat-empty p { margin: 0; max-width: 46ch; }
+.sugs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.sug { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 7px 12px; font-size: .85rem; text-align: left; }
+.msg { display: grid; gap: 6px; max-width: 92%; min-width: 0; }
+.msg.user { justify-self: end; }
+.msg .bubble { border-radius: 14px; padding: 10px 14px; line-height: 1.55; overflow-wrap: anywhere; min-width: 0; }
+.msg.user .bubble { background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; white-space: pre-wrap; }
+.msg.bot .bubble { background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.msg.bot .bubble p { margin: 0 0 .6em; }
+.msg.bot .bubble p:last-child, .msg.bot .bubble ul:last-child, .msg.bot .bubble ol:last-child { margin-bottom: 0; }
+.msg.bot .bubble ul, .msg.bot .bubble ol { margin: 0 0 .6em; padding-left: 1.2em; }
+.msg.bot .bubble strong { font-weight: 700; }
+.msg.err .bubble { background: var(--surface); border: 1px dashed var(--k-tem); color: var(--ink); }
+.msg-acts { display: flex; gap: 14px; flex-wrap: wrap; }
+.dots { display: inline-flex; gap: 4px; padding: 4px 0; }
+.dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite both; }
+.dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25 } 40% { opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .dots i { animation: none; opacity: .6; } }
+.report { display: grid; gap: 8px; border: 1px dashed var(--line); border-radius: 10px; padding: 10px; }
+.report select { border: 1px solid var(--line); border-radius: 8px; padding: 8px; background: var(--surface); color: var(--ink); font: inherit; }
+.chat-ctx { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .82rem; color: var(--muted); background: var(--accent-soft); border-radius: 8px; padding: 6px 10px; }
+.chat-form { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; position: sticky; bottom: 0; background: var(--bg); padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px)); }
+.chat-form textarea { width: 100%; box-sizing: border-box; resize: none; min-height: 48px; max-height: 160px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: var(--surface); color: var(--ink); font: inherit; line-height: 1.4; }
+.chat-form textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+.chat-form .btn { height: 48px; }
+.chat-form .btn:disabled { opacity: .5; }
+.chat-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: .78rem; color: var(--muted); min-height: 1.2em; }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -240,6 +277,7 @@ header { display: grid; gap: 6px; }
     <button role="tab" id="tabAT" aria-selected="true" type="button">Antigo Testamento</button>
     <button role="tab" id="tabNT" aria-selected="false" type="button">Novo Testamento</button>
     <button role="tab" id="tabNotes" aria-selected="false" type="button">Anotações</button>
+    <button role="tab" id="tabChat" aria-selected="false" type="button">Perguntas</button>
   </nav>
   <div class="order" id="orderBar">
     <span>Ordem dos livros</span>
@@ -250,6 +288,17 @@ header { display: grid; gap: 6px; }
   </div>
   <p class="hint" id="orderNote" hidden>Ordem cronológica aproximada, pela época dos acontecimentos e da escrita. As datas de alguns livros são debatidas. O botão "Próximo capítulo" passa a seguir esta ordem.</p>
   <div id="books" style="display:grid;gap:8px"></div>
+  <section class="chat" id="chat" hidden aria-label="Perguntas sobre a Bíblia">
+    <p class="chat-note">Respostas geradas por inteligência artificial, com base na teologia evangélica. Podem conter erros: confira sempre na Bíblia e converse com seu pastor.</p>
+    <div class="chat-log" id="chatLog" aria-live="polite"></div>
+    <div class="chat-ctx" id="chatCtx" hidden><span id="chatCtxTxt"></span><button class="link-x" id="chatCtxX" type="button">Remover</button></div>
+    <form class="chat-form" id="chatForm" novalidate>
+      <label for="chatInput" class="sr">Sua pergunta</label>
+      <textarea id="chatInput" rows="2" maxlength="1500" placeholder="Escreva sua dúvida sobre a Bíblia ou a fé cristã"></textarea>
+      <button class="btn" id="chatSend" type="submit">Enviar</button>
+    </form>
+    <div class="chat-foot"><span id="chatInfo"></span><button class="link-x" id="chatClear" type="button" hidden>Limpar conversa</button></div>
+  </section>
   <div class="ornament" aria-hidden="true"><i></i><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v19 M6.5 8h11"/></svg><i></i></div>
   <section class="backup">
     <h3>Backup</h3>
@@ -271,6 +320,7 @@ header { display: grid; gap: 6px; }
       <button class="close" id="closeBtn" type="button" aria-label="Fechar">×</button>
     </div>
     <p class="about" id="sheetAbout"></p>
+    <button class="chip ask" id="askBook" type="button">Perguntar sobre este livro</button>
     <div class="mode" role="group" aria-label="Ao tocar num capítulo">
       <button type="button" id="modeRead" aria-pressed="true">Marcar lido</button>
       <button type="button" id="modeNote" aria-pressed="false">Anotar</button>
@@ -473,7 +523,8 @@ function render(){
 
   // livros
   const box = document.getElementById("books"); box.innerHTML = "";
-  if (tab === "NOTAS") renderAllNotes(box);
+  if (tab === "CHAT") {}
+  else if (tab === "NOTAS") renderAllNotes(box);
   else for (const [g, ids] of sections(tab)) {
     const sec = document.createElement("div"); sec.className = "section";
     const h = document.createElement("h3"); h.innerHTML = icon(SECTION_ICON[g] || "cross"); h.append(g); sec.appendChild(h);
@@ -493,8 +544,11 @@ function render(){
   document.getElementById("tabAT").setAttribute("aria-selected", tab === "AT");
   document.getElementById("tabNT").setAttribute("aria-selected", tab === "NT");
   document.getElementById("tabNotes").setAttribute("aria-selected", tab === "NOTAS");
-  document.getElementById("orderBar").hidden = tab === "NOTAS";
-  document.getElementById("orderNote").hidden = tab === "NOTAS" || order !== "chrono";
+  document.getElementById("tabChat").setAttribute("aria-selected", tab === "CHAT");
+  document.getElementById("orderBar").hidden = tab === "NOTAS" || tab === "CHAT";
+  document.getElementById("orderNote").hidden = tab === "NOTAS" || tab === "CHAT" || order !== "chrono";
+  document.getElementById("books").hidden = tab === "CHAT";
+  document.getElementById("chat").hidden = tab !== "CHAT";
   document.getElementById("ordBible").setAttribute("aria-pressed", order === "bible");
   document.getElementById("ordChrono").setAttribute("aria-pressed", order === "chrono");
   if (openId) renderSheet();
@@ -725,6 +779,123 @@ const setOrder = o => { order = o; try { localStorage.setItem("leitura-biblica-o
 document.getElementById("ordBible").onclick = () => setOrder("bible");
 document.getElementById("ordChrono").onclick = () => setOrder("chrono");
 document.getElementById("tabNotes").onclick = () => { tab = "NOTAS"; render(); };
+document.getElementById("tabChat").onclick = () => { tab = "CHAT"; render(); renderChat(); };
+
+// ===== Perguntas (chat com IA) =====
+// Endereço do servidor do chat (Cloudflare Worker). Vazio = chat ainda não ligado.
+const CHAT_URL = "";
+const LSC = "leitura-biblica-chat";
+const SUGS = ["O que é a Trindade?", "O que significa ser salvo pela graça?", "Por que Jesus precisou morrer na cruz?", "Quem é o Espírito Santo?", "Qual a diferença entre o Antigo e o Novo Testamento?", "Como posso orar melhor?"];
+let chat = { msgs: [], ctx: "" }, chatBusy = false, chatErr = null, clearArmed = false, reportIdx = null;
+try { const c = JSON.parse(localStorage.getItem(LSC) || "null"); if (c && Array.isArray(c.msgs)) chat = { msgs: c.msgs.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-40), ctx: typeof c.ctx === "string" ? c.ctx : "" }; } catch(e) {}
+function saveChat(){ try { localStorage.setItem(LSC, JSON.stringify({ msgs: chat.msgs.slice(-40), ctx: chat.ctx })); } catch(e) {} }
+function esc(t){ return t.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function inline(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>"); }
+function mdLite(text){
+  const out = []; let list = null;
+  const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
+  for (const raw of text.replace(/\r/g, "").split(/\n/)) {
+    const line = raw.trim();
+    let m;
+    if (!line) { close(); continue; }
+    if ((m = line.match(/^[-*•]\s+(.*)/))) { if (list !== "ul") { close(); out.push("<ul>"); list = "ul"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    if ((m = line.match(/^\d+[.)]\s+(.*)/))) { if (list !== "ol") { close(); out.push("<ol>"); list = "ol"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
+    close();
+    if ((m = line.match(/^#{1,4}\s+(.*)/))) { out.push(`<p><strong>${inline(m[1])}</strong></p>`); continue; }
+    out.push(`<p>${inline(line)}</p>`);
+  }
+  close(); return out.join("");
+}
+function chatBubble(role, html, cls){
+  const d = document.createElement("div"); d.className = "msg " + (cls || (role === "user" ? "user" : "bot"));
+  const b = document.createElement("div"); b.className = "bubble";
+  if (role === "user") b.textContent = html; else b.innerHTML = html;
+  d.appendChild(b); return d;
+}
+function renderChat(){
+  const log = document.getElementById("chatLog"); log.innerHTML = "";
+  if (!chat.msgs.length && !chatBusy && !chatErr) {
+    const e = document.createElement("div"); e.className = "chat-empty";
+    e.innerHTML = icon("dove") + "<h3>Tire suas dúvidas</h3><p>Pergunte sobre a Bíblia e a fé cristã. As respostas seguem a teologia evangélica e citam as passagens bíblicas.</p>";
+    const sg = document.createElement("div"); sg.className = "sugs";
+    for (const q of SUGS) { const b = document.createElement("button"); b.type = "button"; b.className = "sug"; b.textContent = q; b.onclick = () => sendChat(q); sg.appendChild(b); }
+    e.appendChild(sg); log.appendChild(e);
+  }
+  chat.msgs.forEach((m, i) => {
+    if (m.role === "user") { log.appendChild(chatBubble("user", m.content)); return; }
+    const d = chatBubble("assistant", mdLite(m.content));
+    const acts = document.createElement("div"); acts.className = "msg-acts";
+    const cp = document.createElement("button"); cp.type = "button"; cp.className = "link-x"; cp.textContent = "Copiar";
+    cp.onclick = async () => { try { await navigator.clipboard.writeText(m.content); cp.textContent = "Copiado"; } catch(e) { cp.textContent = "Não foi possível copiar"; } setTimeout(() => cp.textContent = "Copiar", 1800); };
+    const rp = document.createElement("button"); rp.type = "button"; rp.className = "link-x"; rp.textContent = m.reported ? "Denunciada" : "Denunciar resposta"; rp.disabled = !!m.reported;
+    rp.onclick = () => { reportIdx = reportIdx === i ? null : i; renderChat(); };
+    acts.append(cp, rp); d.appendChild(acts);
+    if (reportIdx === i) d.appendChild(reportForm(i));
+    log.appendChild(d);
+  });
+  if (chatBusy) { const d = chatBubble("assistant", '<span class="dots" aria-label="Escrevendo resposta"><i></i><i></i><i></i></span>'); log.appendChild(d); }
+  if (chatErr) {
+    const d = chatBubble("assistant", "", "msg err"); d.querySelector(".bubble").textContent = chatErr.msg;
+    if (chatErr.retry) { const a = document.createElement("div"); a.className = "msg-acts"; const r = document.createElement("button"); r.type = "button"; r.className = "link-x"; r.textContent = "Tentar de novo"; r.onclick = () => { chatErr = null; askAI(); }; a.appendChild(r); d.appendChild(a); }
+    log.appendChild(d);
+  }
+  document.getElementById("chatSend").disabled = chatBusy;
+  const cl = document.getElementById("chatClear"); cl.hidden = !chat.msgs.length; cl.textContent = clearArmed ? "Confirmar: apagar conversa" : "Limpar conversa";
+  document.getElementById("chatCtx").hidden = !chat.ctx;
+  document.getElementById("chatCtxTxt").textContent = chat.ctx ? `Contexto: ${chat.ctx}` : "";
+  document.getElementById("chatInfo").textContent = CHAT_URL ? "A conversa fica salva só neste celular." : "";
+}
+function reportForm(i){
+  const f = document.createElement("form"); f.className = "report";
+  f.innerHTML = '<label class="hint" for="rpReason">O que há de errado com esta resposta?</label><select id="rpReason"><option>Informação bíblica incorreta</option><option>Conteúdo ofensivo ou inadequado</option><option>Fora do tema</option><option>Outro problema</option></select><div class="sheet-actions"><button class="btn" type="submit">Enviar denúncia</button><button class="btn ghost" type="button" id="rpCancel">Cancelar</button></div>';
+  f.querySelector("#rpCancel").onclick = () => { reportIdx = null; renderChat(); };
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const q = [...chat.msgs.slice(0, i)].reverse().find(m => m.role === "user");
+    try {
+      const r = await fetch(CHAT_URL.replace(/\/$/, "") + "/report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason: f.querySelector("#rpReason").value, question: q ? q.content : "", answer: chat.msgs[i].content }) });
+      if (!r.ok) throw 0;
+      chat.msgs[i].reported = true; saveChat(); reportIdx = null; renderChat();
+    } catch(_) { f.querySelector(".hint").textContent = "Não foi possível enviar agora. Verifique a internet e tente de novo."; }
+  };
+  return f;
+}
+function scrollChatEnd(){ const f = document.getElementById("chatForm"); f.scrollIntoView({ block: "end", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); }
+async function askAI(){
+  if (!CHAT_URL) { chatErr = { msg: "O chat ainda não foi ligado ao servidor. Assim que for configurado, as respostas aparecem aqui.", retry: false }; renderChat(); return; }
+  if (!navigator.onLine) { chatErr = { msg: "Sem internet. As perguntas precisam de conexão para serem respondidas.", retry: true }; renderChat(); return; }
+  chatBusy = true; chatErr = null; renderChat(); scrollChatEnd();
+  const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 45000);
+  try {
+    const r = await fetch(CHAT_URL, { method: "POST", headers: { "Content-Type": "application/json" }, signal: ctl.signal,
+      body: JSON.stringify({ messages: chat.msgs.slice(-16).map(m => ({ role: m.role, content: m.content })), context: chat.ctx || undefined }) });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || !data.reply) throw { msg: data.message || "Não foi possível responder agora. Tente de novo em instantes.", retry: r.status !== 403 && r.status !== 429 };
+    chat.msgs.push({ role: "assistant", content: data.reply }); saveChat();
+  } catch(e) {
+    chatErr = e && e.msg ? e : { msg: e && e.name === "AbortError" ? "A resposta demorou demais. Tente de novo." : "Não foi possível falar com o servidor. Verifique a internet e tente de novo.", retry: true };
+  } finally { clearTimeout(timer); chatBusy = false; renderChat(); scrollChatEnd(); }
+}
+function sendChat(text){
+  const q = (text || "").trim(); if (!q || chatBusy) return;
+  clearArmed = false; reportIdx = null; chatErr = null;
+  chat.msgs.push({ role: "user", content: q.slice(0, 1500) }); saveChat();
+  const inp = document.getElementById("chatInput"); inp.value = ""; inp.style.height = "";
+  askAI();
+}
+document.getElementById("chatForm").addEventListener("submit", e => { e.preventDefault(); sendChat(document.getElementById("chatInput").value); });
+document.getElementById("chatInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer: coarse)").matches) { e.preventDefault(); sendChat(e.target.value); } });
+document.getElementById("chatInput").addEventListener("input", e => { e.target.style.height = "auto"; e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px"; });
+document.getElementById("chatClear").onclick = () => { if (!clearArmed) { clearArmed = true; renderChat(); return; } chat = { msgs: [], ctx: "" }; clearArmed = false; chatErr = null; reportIdx = null; saveChat(); renderChat(); };
+document.getElementById("chatCtxX").onclick = () => { chat.ctx = ""; saveChat(); renderChat(); };
+document.getElementById("askBook").onclick = () => {
+  const b = BY[openId]; if (!b) return;
+  if (guardDraft()) return;
+  closeSheet(); chat.ctx = `o livro de ${b.name}`; saveChat();
+  tab = "CHAT"; render(); renderChat();
+  const inp = document.getElementById("chatInput"); inp.value = `Qual é a mensagem principal de ${b.name} e como ela aponta para Cristo?`; inp.focus();
+  document.getElementById("chatForm").scrollIntoView({ block: "end" });
+};
 document.getElementById("modeRead").onclick = () => { flushNote(); mode = "read"; renderSheet(); };
 document.getElementById("modeNote").onclick = () => { mode = "note"; renderSheet(); };
 document.getElementById("edText").addEventListener("input", () => {

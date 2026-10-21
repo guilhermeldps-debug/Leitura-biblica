@@ -49,9 +49,9 @@ O Leitura Bíblica é um diário de leitura simples e bonito para quem quer ler 
 • Um pequeno resumo do assunto de cada livro ajuda a contextualizar a leitura.
 
 💬 TIRE SUAS DÚVIDAS
-• Painel "Perguntas", aberto pelo botão no topo: pergunte sobre a Bíblia e a fé cristã e receba respostas de uma inteligência artificial, com base na teologia evangélica e com as referências bíblicas.
+• Painel "Perguntas", aberto pelo botão no topo: pergunte sobre a Bíblia e a fé cristã e receba respostas de uma inteligência artificial que mostram, separadamente e bem identificadas, a visão evangélica e a visão católica, além do que as duas têm em comum, com as referências bíblicas.
 • Pergunte direto de um livro para entender a mensagem dele.
-• As respostas são geradas por IA e podem conter erros: confira na Bíblia e converse com seu pastor.
+• As respostas são geradas por IA e podem conter erros: confira na Bíblia e converse com o pastor ou o padre da sua comunidade.
 
 🔒 PRIVADO E OFFLINE
 • Sem cadastro, sem anúncios e sem rastreamento.

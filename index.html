@@ -198,6 +198,13 @@ header { display: grid; gap: 6px; }
 .msg.bot .bubble strong { font-weight: 700; }
 .msg.err .bubble { background: var(--surface); border: 1px dashed var(--k-tem); color: var(--ink); }
 .msg-acts { display: flex; gap: 14px; flex-wrap: wrap; }
+.tr { --kc: var(--muted); border-left: 3px solid var(--kc); padding: 2px 0 2px 12px; margin: 0 0 .9em; }
+.tr:last-child { margin-bottom: 0; }
+.tr-ev { --kc: var(--k-par); } .tr-ca { --kc: var(--k-tem); } .tr-co { --kc: var(--k-cit); }
+.tr-h { margin: 0 0 .35em !important; font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--kc); }
+.trad-key { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; font-size: .76rem; color: var(--muted); }
+.trad-key span { display: inline-flex; align-items: center; gap: 6px; }
+.trad-key i { width: 3px; height: 14px; border-radius: 2px; background: var(--kc); }
 .dots { display: inline-flex; gap: 4px; padding: 4px 0; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: blink 1.2s infinite both; }
 .dots i:nth-child(2) { animation-delay: .2s; } .dots i:nth-child(3) { animation-delay: .4s; }
@@ -338,7 +345,7 @@ html.chat-lock, html.chat-lock body { overflow: hidden; }
     <button class="close" id="chatClose" type="button" aria-label="Fechar perguntas">×</button>
   </header>
   <div class="chat-body" id="chatBody">
-    <p class="chat-note">Respostas geradas por inteligência artificial, com base na teologia evangélica. Podem conter erros: confira sempre na Bíblia e converse com seu pastor.</p>
+    <p class="chat-note">Respostas geradas por inteligência artificial, mostrando separadamente a visão evangélica e a católica. Podem conter erros: confira sempre na Bíblia e converse com o pastor ou o padre da sua comunidade.</p>
     <div class="chat-log" id="chatLog" aria-live="polite"></div>
   </div>
   <div class="chat-dock">
@@ -823,15 +830,23 @@ document.getElementById("tabNotes").onclick = () => { tab = "NOTAS"; render(); }
 // Endereço do servidor do chat (Cloudflare Worker). Vazio = chat ainda não ligado.
 const CHAT_URL = "";
 const LSC = "leitura-biblica-chat";
-const SUGS = ["O que é a Trindade?", "O que significa ser salvo pela graça?", "Por que Jesus precisou morrer na cruz?", "Quem é o Espírito Santo?", "Qual a diferença entre o Antigo e o Novo Testamento?", "Como posso orar melhor?"];
+const SUGS = ["O que é a Trindade?", "O que significa ser salvo pela graça?", "Por que Jesus precisou morrer na cruz?", "Por que católicos e evangélicos têm Bíblias diferentes?", "Qual a diferença entre o Antigo e o Novo Testamento?", "Como posso orar melhor?"];
 let chat = { msgs: [], ctx: "" }, chatBusy = false, chatErr = null, clearArmed = false, reportIdx = null;
 try { const c = JSON.parse(localStorage.getItem(LSC) || "null"); if (c && Array.isArray(c.msgs)) chat = { msgs: c.msgs.filter(m => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string").slice(-40), ctx: typeof c.ctx === "string" ? c.ctx : "" }; } catch(e) {}
 function saveChat(){ try { localStorage.setItem(LSC, JSON.stringify({ msgs: chat.msgs.slice(-40), ctx: chat.ctx })); } catch(e) {} }
 function esc(t){ return t.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 function inline(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<em>$2</em>"); }
+// Seções da resposta: cada tradição ganha um bloco com nome e cor
+const TRAD = [
+  [/evang[eé]l|protestant/i, "ev", "Visão evangélica"],
+  [/cat[oó]lic/i, "ca", "Visão católica"],
+  [/comum|ambas|concordam/i, "co", "Em comum"]
+];
+function tradOf(title){ for (const [re, k, label] of TRAD) if (re.test(title)) return [k, label]; return null; }
 function mdLite(text){
-  const out = []; let list = null;
+  const out = []; let list = null, sec = false;
   const close = () => { if (list) { out.push(`</${list}>`); list = null; } };
+  const openSec = (k, label) => { close(); if (sec) out.push("</div>"); out.push(`<div class="tr tr-${k}"><p class="tr-h">${label}</p>`); sec = true; };
   for (const raw of text.replace(/\r/g, "").split(/\n/)) {
     const line = raw.trim();
     let m;
@@ -839,10 +854,15 @@ function mdLite(text){
     if ((m = line.match(/^[-*•]\s+(.*)/))) { if (list !== "ul") { close(); out.push("<ul>"); list = "ul"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
     if ((m = line.match(/^\d+[.)]\s+(.*)/))) { if (list !== "ol") { close(); out.push("<ol>"); list = "ol"; } out.push(`<li>${inline(m[1])}</li>`); continue; }
     close();
-    if ((m = line.match(/^#{1,4}\s+(.*)/))) { out.push(`<p><strong>${inline(m[1])}</strong></p>`); continue; }
+    const head = (m = line.match(/^#{1,4}\s+(.*)/)) ? m[1].replace(/\*\*/g, "") : (m = line.match(/^\*\*([^*]{2,60})\*\*:?$/)) ? m[1] : null;
+    if (head !== null) {
+      const t = head.length <= 40 ? tradOf(head) : null;
+      if (t) { openSec(t[0], t[1]); continue; }
+      out.push(`<p><strong>${inline(head)}</strong></p>`); continue;
+    }
     out.push(`<p>${inline(line)}</p>`);
   }
-  close(); return out.join("");
+  close(); if (sec) out.push("</div>"); return out.join("");
 }
 function chatBubble(role, html, cls){
   const d = document.createElement("div"); d.className = "msg " + (cls || (role === "user" ? "user" : "bot"));
@@ -854,7 +874,8 @@ function renderChat(){
   const log = document.getElementById("chatLog"); log.innerHTML = "";
   if (!chat.msgs.length && !chatBusy && !chatErr) {
     const e = document.createElement("div"); e.className = "chat-empty";
-    e.innerHTML = icon("dove") + "<h3>Tire suas dúvidas</h3><p>Pergunte sobre a Bíblia e a fé cristã. As respostas seguem a teologia evangélica e citam as passagens bíblicas.</p>";
+    e.innerHTML = icon("dove") + "<h3>Tire suas dúvidas</h3><p>Pergunte sobre a Bíblia e a fé cristã. Cada resposta mostra o que evangélicos e católicos creem em comum e, separadas, a visão de cada tradição, com as passagens bíblicas.</p>"
+      + '<div class="trad-key" aria-hidden="true"><span class="tr-co"><i></i>Em comum</span><span class="tr-ev"><i></i>Visão evangélica</span><span class="tr-ca"><i></i>Visão católica</span></div>';
     const sg = document.createElement("div"); sg.className = "sugs";
     for (const q of SUGS) { const b = document.createElement("button"); b.type = "button"; b.className = "sug"; b.textContent = q; b.onclick = () => sendChat(q); sg.appendChild(b); }
     e.appendChild(sg); log.appendChild(e);

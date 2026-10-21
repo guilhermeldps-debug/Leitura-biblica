@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.guilhermeldps_debug.leiturabiblica",
+      "sha256_cert_fingerprints": [
+        "COLE_AQUI_O_SHA256_DA_CHAVE_DE_ASSINATURA_DO_APP_DO_PLAY_CONSOLE",
+        "COLE_AQUI_O_SHA256_DA_CHAVE_DE_UPLOAD_GERADA_PELO_PWABUILDER"
+      ]
+    }
+  }
+]

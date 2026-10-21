@@ -1,9 +1,65 @@
-const CACHE = "leitura-biblica-v11";
-const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable.png"];
-self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
-self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))); self.clients.claim(); });
-self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
-  e.respondWith(fetch(e.request).then(r => { if (r.ok && new URL(e.request.url).origin === location.origin) { const c = r.clone(); caches.open(CACHE).then(k => k.put(e.request, c)); } return r; })
-    .catch(() => caches.match(e.request, { ignoreSearch: true }).then(r => r || caches.match("index.html"))));
+/* Service worker do Leitura Bíblica.
+   Guarda os arquivos do app para uso offline. Não mexe no progresso:
+   marcações, anotações e conexões ficam no localStorage do aparelho,
+   que o service worker não lê nem apaga. */
+const VERSION = "v12";
+const APP_CACHE = "leitura-biblica-app-" + VERSION;
+const FONT_CACHE = "leitura-biblica-fontes";
+const APP_FILES = [
+  "./",
+  "index.html",
+  "privacidade.html",
+  "manifest.json",
+  "icons/icon-192.png",
+  "icons/icon-512.png",
+  "icons/icon-192-maskable.png",
+  "icons/icon-512-maskable.png",
+  "icons/apple-touch-icon.png",
+  "icons/favicon-48.png"
+];
+
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(APP_CACHE).then(cache => cache.addAll(APP_FILES)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k.startsWith("leitura-biblica") && k !== APP_CACHE && k !== FONT_CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener("fetch", event => {
+  const req = event.request;
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+
+  // Fontes do Google: guarda na primeira vez e usa a cópia depois (funciona offline).
+  if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
+    event.respondWith(caches.open(FONT_CACHE).then(async cache => {
+      const hit = await cache.match(req);
+      const net = fetch(req).then(res => { if (res.ok || res.type === "opaque") cache.put(req, res.clone()); return res; }).catch(() => hit);
+      return hit || net;
+    }));
+    return;
+  }
+
+  if (url.origin !== self.location.origin) return;
+
+  // Páginas: tenta a rede (para receber atualizações) e cai no cache sem internet.
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req).then(res => { if (res.ok) caches.open(APP_CACHE).then(c => c.put(req, res.clone())); return res; })
+        .catch(async () => (await caches.match(req, { ignoreSearch: true })) || caches.match("index.html"))
+    );
+    return;
+  }
+
+  // Demais arquivos do app: responde do cache e atualiza em segundo plano.
+  event.respondWith(caches.open(APP_CACHE).then(async cache => {
+    const hit = await cache.match(req, { ignoreSearch: true });
+    const net = fetch(req).then(res => { if (res.ok) cache.put(req, res.clone()); return res; }).catch(() => hit);
+    return hit || net;
+  }));
 });

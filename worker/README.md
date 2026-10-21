@@ -1,6 +1,6 @@
-# Servidor do chat (aba "Perguntas")
+# Servidor do chat (painel "Perguntas")
 
-A aba **Perguntas** do app envia as dúvidas para este pequeno servidor, que roda de graça na Cloudflare. Ele guarda a sua chave da API do Claude em segredo, conversa com a IA e devolve a resposta ao app. A chave nunca fica no código do app, que é público.
+O painel **Perguntas** do app envia as dúvidas para este pequeno servidor, que roda de graça na Cloudflare. Ele guarda a sua chave da API do Claude em segredo, conversa com a IA e devolve a resposta ao app. A chave nunca fica no código do app, que é público.
 
 Tudo pode ser feito pelo navegador, inclusive no celular. Leva uns 15 minutos.
 
@@ -73,7 +73,7 @@ passa a ser
 const CHAT_URL = "https://leitura-biblica-chat.SEU-USUARIO.workers.dev";
 ```
 
-Depois do envio ao GitHub, a aba **Perguntas** começa a responder em poucos minutos, inclusive no app instalado e na versão da Play Store.
+Depois do envio ao GitHub, o painel **Perguntas** começa a responder em poucos minutos, inclusive no app instalado e na versão da Play Store.
 
 ---
 

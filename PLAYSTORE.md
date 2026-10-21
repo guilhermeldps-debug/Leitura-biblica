@@ -49,13 +49,13 @@ O Leitura Bíblica é um diário de leitura simples e bonito para quem quer ler 
 • Um pequeno resumo do assunto de cada livro ajuda a contextualizar a leitura.
 
 💬 TIRE SUAS DÚVIDAS
-• Aba "Perguntas": pergunte sobre a Bíblia e a fé cristã e receba respostas de uma inteligência artificial, com base na teologia evangélica e com as referências bíblicas.
+• Painel "Perguntas", aberto pelo botão no topo: pergunte sobre a Bíblia e a fé cristã e receba respostas de uma inteligência artificial, com base na teologia evangélica e com as referências bíblicas.
 • Pergunte direto de um livro para entender a mensagem dele.
 • As respostas são geradas por IA e podem conter erros: confira na Bíblia e converse com seu pastor.
 
 🔒 PRIVADO E OFFLINE
 • Sem cadastro, sem anúncios e sem rastreamento.
-• Seu progresso, suas anotações e suas conexões ficam somente no seu celular. Só as perguntas que você faz na aba "Perguntas" são enviadas para serem respondidas pela IA, sem identificar você.
+• Seu progresso, suas anotações e suas conexões ficam somente no seu celular. Só as perguntas que você faz no painel "Perguntas" são enviadas para serem respondidas pela IA, sem identificar você.
 • Funciona sem internet.
 • Salve um arquivo de backup e restaure quando trocar de aparelho.
 
@@ -81,7 +81,7 @@ Observação: o app não traz o texto bíblico. Use-o junto com a sua Bíblia pr
 |---|---|
 | Ícone 512×512 | `loja/icone-512.png` |
 | Gráfico de destaque 1024×500 | `loja/feature-graphic-1024x500.png` |
-| Capturas de tela do celular (mínimo 2) | `screenshots/painel.png`, `screenshots/livro.png`, `screenshots/conexoes.png` (1080×1920) |
+| Capturas de tela do celular (mínimo 2) | `screenshots/painel.png`, `screenshots/livro.png`, `screenshots/conexoes.png`, `screenshots/perguntas.png` (1080×1920) |
 
 As capturas usam dados de exemplo. Se preferir, tire capturas no seu próprio celular, que já mostram as fontes exatamente como no app.
 
@@ -153,7 +153,7 @@ Alternativa: usar um domínio próprio (ex.: `leiturabiblica.com.br`) no GitHub 
    - **Política de privacidade:** `https://guilhermeldps-debug.github.io/Leitura-biblica/privacidade.html`
    - **Anúncios:** não contém anúncios.
    - **Acesso ao app:** todo o app está disponível sem login.
-   - **Segurança dos dados:** progresso, anotações e conexões ficam só no aparelho e não são coletados. A aba **Perguntas** envia o texto das perguntas a um servidor para gerar a resposta, então declare:
+   - **Segurança dos dados:** progresso, anotações e conexões ficam só no aparelho e não são coletados. O painel **Perguntas** envia o texto das perguntas a um servidor para gerar a resposta, então declare:
      - **Coleta de dados: Sim** → tipo **Atividade no app → Outros conteúdos gerados pelo usuário**.
      - **Uso:** Funcionalidade do app. **Opcional** (o usuário escolhe se quer usar o chat). **Processado de forma temporária**: as conversas não são guardadas; só respostas denunciadas ficam 90 dias para revisão.
      - **Compartilhamento: Não** (Cloudflare e Anthropic atuam como prestadores de serviço, que o Google não considera compartilhamento).

@@ -11,16 +11,65 @@
   "orientation": "any",
   "theme_color": "#23407a",
   "background_color": "#f6f7f9",
-  "categories": ["books", "education", "lifestyle"],
+  "categories": [
+    "books",
+    "education",
+    "lifestyle"
+  ],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "screenshots": [
-    { "src": "screenshots/painel.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Painel com o progresso de leitura" },
-    { "src": "screenshots/livro.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Capítulos de um livro com resumo" },
-    { "src": "screenshots/conexoes.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "Anotações e conexões entre passagens" }
+    {
+      "src": "screenshots/painel.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Painel com o progresso de leitura"
+    },
+    {
+      "src": "screenshots/livro.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Capítulos de um livro com resumo"
+    },
+    {
+      "src": "screenshots/conexoes.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Anotações e conexões entre passagens"
+    },
+    {
+      "src": "screenshots/perguntas.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Perguntas sobre a Bíblia respondidas por IA"
+    }
   ]
 }

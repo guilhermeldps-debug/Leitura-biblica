@@ -187,6 +187,15 @@ header { display: grid; gap: 6px; }
 .confirm { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
 .backup { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 18px; }
 .backup h3 { font-size: 1.2rem; }
+.drive { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.drive-head { display: flex; align-items: center; gap: 8px; color: var(--ink); }
+.drive-head .ic { width: 22px; height: 22px; color: var(--accent); }
+.drv-status { margin: 0; font-size: .82rem; color: var(--muted); min-height: 1.2em; }
+.drv-status.ok { color: var(--k-cit); }
+.drv-status.err { color: var(--k-tem); }
+.drv-confirm { display: grid; gap: 10px; border: 1px dashed var(--gilt); border-radius: 10px; padding: 12px; }
+.drv-confirm p { margin: 0; font-size: .9rem; }
+.btn:disabled { opacity: .55; }
 .hint { color: var(--muted); font-size: .8rem; margin: 0; }
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
@@ -254,6 +263,24 @@ header { display: grid; gap: 6px; }
   <section class="backup">
     <h3>Backup</h3>
     <p class="hint">Seu progresso fica guardado neste celular. Salve um backup de vez em quando para não perder nada se trocar de aparelho.</p>
+    <div class="drive" id="driveBox" hidden>
+      <div class="drive-head" id="driveHead"><b>Google Drive</b></div>
+      <p class="hint">Guarde uma cópia na sua conta Google. Cada backup substitui o anterior, sempre no mesmo arquivo, na pasta "Leitura Bíblica" do seu Drive.</p>
+      <div class="sheet-actions" id="drvActions">
+        <button class="btn" id="drvSave" type="button">Salvar no Drive</button>
+        <button class="btn ghost" id="drvRestore" type="button">Restaurar do Drive</button>
+      </div>
+      <div class="drv-confirm" id="drvConfirm" hidden>
+        <p id="drvConfirmTxt"></p>
+        <div class="sheet-actions">
+          <button class="btn" id="drvConfirmYes" type="button">Substituir progresso</button>
+          <button class="btn ghost" id="drvConfirmNo" type="button">Cancelar</button>
+        </div>
+      </div>
+      <p class="drv-status" id="drvStatus" role="status" aria-live="polite"></p>
+      <button class="link-x" id="drvLogout" type="button" hidden>Desconectar conta Google</button>
+    </div>
+    <p class="hint" id="fileLabel" hidden>Ou guarde um arquivo neste celular:</p>
     <div class="sheet-actions">
       <button class="btn ghost" id="expBtn" type="button">Salvar backup</button>
       <button class="btn ghost" id="impBtn" type="button">Restaurar backup</button>
@@ -766,7 +793,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => appl
 
 // backup
 document.getElementById("expBtn").onclick = () => {
-  const blob = new Blob([JSON.stringify({ app: "diario-leitura-biblica", v: 1, ...state }, null, 1)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify({ app: "diario-leitura-biblica", v: 1, savedAt: new Date().toISOString(), ...state }, null, 1)], { type: "application/json" });
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
   a.download = "backup-leitura-biblica-" + todayKey() + ".json"; document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
@@ -779,6 +806,158 @@ document.getElementById("impFile").onchange = async e => {
   catch(_) { setStatus("Esse arquivo não é um backup do diário. Escolha o arquivo .json exportado pelo app."); }
   e.target.value = "";
 };
+// ===== Backup no Google Drive =====
+// ID do cliente OAuth (Google Cloud). Vazio = recurso desligado. Veja GOOGLE-DRIVE.md.
+const DRIVE_CLIENT_ID = "";
+const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+const DRIVE_FILE = "backup-leitura-biblica.json";
+const DRIVE_FOLDER = "Leitura Bíblica";
+const DRIVE_API = "https://www.googleapis.com/drive/v3";
+const DRIVE_UP = "https://www.googleapis.com/upload/drive/v3";
+const DRV_META = "leitura-biblica-drive";
+const ss = { get(k){ try { return sessionStorage.getItem(k); } catch(e) { return null; } }, set(k, v){ try { sessionStorage.setItem(k, v); } catch(e) {} }, del(k){ try { sessionStorage.removeItem(k); } catch(e) {} } };
+let drvMeta = {}; try { drvMeta = JSON.parse(localStorage.getItem(DRV_META) || "{}") || {}; } catch(e) {}
+let drvPending = null, drvBusy = false;
+ICONS.cloud = "M7 18.5h10.5a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.6 9.1 4.75 4.75 0 0 0 7 18.5z M12 15.5v-5 M9.8 12.6 12 10.4l2.2 2.2";
+function saveDrvMeta(){ try { localStorage.setItem(DRV_META, JSON.stringify(drvMeta)); } catch(e) {} }
+const fmtWhen = iso => { const d = new Date(iso); return d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }); };
+function drvSay(msg, kind){ const el = document.getElementById("drvStatus"); el.textContent = msg; el.className = "drv-status" + (kind ? " " + kind : ""); }
+function drvIdle(){
+  const parts = [];
+  if (drvMeta.email) parts.push("Conta: " + drvMeta.email);
+  parts.push(drvMeta.last ? "Último backup no Drive: " + fmtWhen(drvMeta.last) : "Nenhum backup no Drive ainda.");
+  drvSay(parts.join(" · "));
+  document.getElementById("drvLogout").hidden = !drvMeta.email && !drvToken();
+}
+function drvSetBusy(b){ drvBusy = b; document.getElementById("drvSave").disabled = b; document.getElementById("drvRestore").disabled = b; }
+function drvToken(){
+  try { const t = JSON.parse(ss.get("lb-drive-token") || "null"); return t && t.exp > Date.now() + 60000 ? t.t : null; } catch(e) { return null; }
+}
+const drvRedirect = () => new URL("./", location.href).href;
+function drvAuth(action){
+  const st = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, "0")).join("");
+  ss.set("lb-drive-state", st); ss.set("lb-drive-pending", action);
+  const q = new URLSearchParams({ client_id: DRIVE_CLIENT_ID, redirect_uri: drvRedirect(), response_type: "token", scope: DRIVE_SCOPE, state: st, include_granted_scopes: "true" });
+  if (drvMeta.email) q.set("login_hint", drvMeta.email);
+  drvSay("Abrindo o login do Google…");
+  location.assign("https://accounts.google.com/o/oauth2/v2/auth?" + q);
+}
+class DriveError extends Error { constructor(msg, auth){ super(msg); this.auth = !!auth; } }
+async function drvFetch(url, opts = {}){
+  const tok = drvToken(); if (!tok) throw new DriveError("", true);
+  let r;
+  try { r = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: "Bearer " + tok } }); }
+  catch(e) { throw new DriveError("Não foi possível falar com o Google Drive. Verifique a internet e tente de novo."); }
+  if (r.status === 401) { ss.del("lb-drive-token"); throw new DriveError("", true); }
+  if (!r.ok) {
+    let reason = ""; try { const j = await r.json(); reason = JSON.stringify(j.error || j); } catch(e) {}
+    if (/accessNotConfigured|SERVICE_DISABLED|has not been used/i.test(reason)) throw new DriveError("A API do Google Drive ainda não foi ativada no projeto do Google Cloud.");
+    if (/storageQuotaExceeded/i.test(reason)) throw new DriveError("Seu Google Drive está sem espaço. Libere espaço e tente de novo.");
+    if (r.status === 403) throw new DriveError("O Google Drive recusou o acesso. Toque em \"Desconectar conta Google\" e conecte de novo.");
+    throw new DriveError("O Google Drive não respondeu como esperado. Tente de novo em instantes.");
+  }
+  return r;
+}
+async function drvFind(){
+  const q = new URLSearchParams({ q: `name = '${DRIVE_FILE}' and trashed = false`, spaces: "drive", orderBy: "modifiedTime desc", pageSize: "1", fields: "files(id,modifiedTime)" });
+  const j = await (await drvFetch(`${DRIVE_API}/files?${q}`)).json();
+  return j.files && j.files[0] || null;
+}
+async function drvFolder(){
+  const q = new URLSearchParams({ q: `name = '${DRIVE_FOLDER}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`, spaces: "drive", pageSize: "1", fields: "files(id)" });
+  const j = await (await drvFetch(`${DRIVE_API}/files?${q}`)).json();
+  if (j.files && j.files[0]) return j.files[0].id;
+  const r = await drvFetch(`${DRIVE_API}/files?fields=id`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: DRIVE_FOLDER, mimeType: "application/vnd.google-apps.folder" }) });
+  return (await r.json()).id;
+}
+async function drvAccount(){
+  if (drvMeta.email) return;
+  try { const j = await (await drvFetch(`${DRIVE_API}/about?fields=user(emailAddress)`)).json(); if (j.user && j.user.emailAddress) { drvMeta.email = j.user.emailAddress; saveDrvMeta(); } } catch(e) {}
+}
+const backupJson = () => JSON.stringify({ app: "diario-leitura-biblica", v: 1, savedAt: new Date().toISOString(), ...state }, null, 1);
+async function drvSaveNow(){
+  drvSay("Salvando no Drive…");
+  const content = backupJson(), file = await drvFind();
+  let res;
+  if (file) {
+    res = await drvFetch(`${DRIVE_UP}/files/${encodeURIComponent(file.id)}?uploadType=media&fields=id,modifiedTime`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: content });
+  } else {
+    const folder = await drvFolder(), bd = "lb" + Math.random().toString(36).slice(2);
+    const meta = { name: DRIVE_FILE, parents: [folder], mimeType: "application/json", description: "Backup do app Leitura Bíblica. Cada novo backup substitui este arquivo." };
+    const body = `--${bd}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${bd}\r\nContent-Type: application/json\r\n\r\n${content}\r\n--${bd}--`;
+    res = await drvFetch(`${DRIVE_UP}/files?uploadType=multipart&fields=id,modifiedTime`, { method: "POST", headers: { "Content-Type": `multipart/related; boundary=${bd}` }, body });
+  }
+  const j = await res.json();
+  drvMeta.last = j.modifiedTime || new Date().toISOString(); saveDrvMeta();
+  await drvAccount();
+  drvIdle(); drvSay((file ? "Backup atualizado no Drive. " : "Backup criado no Drive. ") + document.getElementById("drvStatus").textContent, "ok");
+}
+async function drvRestoreNow(){
+  drvSay("Buscando o backup no Drive…");
+  const file = await drvFind();
+  await drvAccount();
+  if (!file) { drvIdle(); drvSay("Não há backup no Drive desta conta" + (drvMeta.email ? ` (${drvMeta.email})` : "") + ". Use \"Salvar no Drive\" primeiro.", "err"); return; }
+  const r = await drvFetch(`${DRIVE_API}/files/${encodeURIComponent(file.id)}?alt=media`);
+  let d; try { d = JSON.parse(await r.text()); } catch(e) { d = null; }
+  if (!d || typeof d.read !== "object") { drvSay("O arquivo do Drive não é um backup válido do diário.", "err"); return; }
+  const data = clean(d);
+  const caps = Object.values(data.read).reduce((n, a) => n + (Array.isArray(a) ? a.length : 0), 0);
+  const notes = Object.values(data.notes).reduce((n, o) => n + Object.keys(o || {}).length, 0);
+  drvPending = data;
+  document.getElementById("drvConfirmTxt").textContent = `Backup de ${fmtWhen(d.savedAt || file.modifiedTime)}: ${fmt(caps)} capítulo${caps === 1 ? "" : "s"} lido${caps === 1 ? "" : "s"}, ${notes} anotaç${notes === 1 ? "ão" : "ões"} e ${data.links.length} conex${data.links.length === 1 ? "ão" : "ões"}. Restaurar substitui todo o progresso deste celular.`;
+  document.getElementById("drvConfirm").hidden = false; document.getElementById("drvActions").hidden = true;
+  drvSay("");
+  document.getElementById("drvConfirmYes").focus();
+}
+async function drvRun(action, fromRedirect){
+  if (drvBusy) return;
+  if (!navigator.onLine) { drvSay("Sem internet. Conecte-se para usar o Google Drive.", "err"); return; }
+  if (!drvToken()) { drvAuth(action); return; }
+  drvSetBusy(true);
+  try { action === "save" ? await drvSaveNow() : await drvRestoreNow(); }
+  catch(e) {
+    if (e.auth && !fromRedirect) { drvSetBusy(false); drvAuth(action); return; }
+    drvSay(e.auth ? "Não foi possível entrar na conta Google. Tente de novo." : (e.message || "Algo deu errado. Tente de novo."), "err");
+  }
+  finally { drvSetBusy(false); }
+}
+function drvHandleReturn(){
+  const h = location.hash.slice(1);
+  if (!/(^|&)(access_token|error)=/.test(h)) return;
+  const p = new URLSearchParams(h), pending = ss.get("lb-drive-pending"), st = ss.get("lb-drive-state");
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(e) { location.hash = ""; }
+  ss.del("lb-drive-state"); ss.del("lb-drive-pending");
+  document.getElementById("driveBox").scrollIntoView({ block: "center" });
+  if (!st || p.get("state") !== st) { drvSay("O retorno do login não pôde ser confirmado. Tente de novo.", "err"); return; }
+  if (p.get("error")) { drvSay(p.get("error") === "access_denied" ? "Acesso ao Google Drive cancelado." : "O Google não autorizou o acesso. Tente de novo.", "err"); return; }
+  const granted = (p.get("scope") || DRIVE_SCOPE).split(" ");
+  if (!granted.includes(DRIVE_SCOPE)) { drvSay("Para salvar o backup, marque a permissão de acesso ao Google Drive na tela do Google.", "err"); return; }
+  ss.set("lb-drive-token", JSON.stringify({ t: p.get("access_token"), exp: Date.now() + (parseInt(p.get("expires_in") || "3600", 10) * 1000) }));
+  if (pending === "save" || pending === "restore") drvRun(pending, true);
+}
+if (DRIVE_CLIENT_ID) {
+  document.getElementById("driveBox").hidden = false;
+  document.getElementById("fileLabel").hidden = false;
+  document.getElementById("driveHead").insertAdjacentHTML("afterbegin", icon("cloud"));
+  drvIdle();
+  document.getElementById("drvSave").onclick = () => drvRun("save");
+  document.getElementById("drvRestore").onclick = () => drvRun("restore");
+  document.getElementById("drvConfirmNo").onclick = () => { drvPending = null; document.getElementById("drvConfirm").hidden = true; document.getElementById("drvActions").hidden = false; drvIdle(); };
+  document.getElementById("drvConfirmYes").onclick = () => {
+    if (!drvPending) return;
+    state = drvPending; drvPending = null; persist(); render();
+    document.getElementById("drvConfirm").hidden = true; document.getElementById("drvActions").hidden = false;
+    drvIdle(); drvSay("Backup do Drive restaurado neste celular.", "ok"); setStatus("Backup restaurado");
+  };
+  document.getElementById("drvLogout").onclick = () => {
+    const t = drvToken();
+    if (t) { try { fetch("https://oauth2.googleapis.com/revoke?token=" + encodeURIComponent(t), { method: "POST", mode: "no-cors" }); } catch(e) {} }
+    ss.del("lb-drive-token"); drvMeta = { last: drvMeta.last }; saveDrvMeta();
+    drvIdle(); drvSay("Conta Google desconectada deste app. O backup continua no seu Drive.");
+  };
+  drvHandleReturn();
+}
+
 if ("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {}));
 </script>
 

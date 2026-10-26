@@ -41,9 +41,9 @@ footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
   <a class="back" href="./">← Voltar ao app</a>
   <p class="eyebrow">Leitura Bíblica</p>
   <h1>Política de Privacidade</h1>
-  <p class="updated">Última atualização: 21 de outubro de 2026</p>
+  <p class="updated">Última atualização: 26 de outubro de 2026</p>
 
-  <p class="summary"><strong>Resumo:</strong> o Leitura Bíblica não tem contas nem cadastro e não coleta dados pessoais. Tudo o que você registra no app fica guardado apenas no seu aparelho e não é enviado a nenhum servidor.</p>
+  <p class="summary"><strong>Resumo:</strong> o Leitura Bíblica não tem contas nem cadastro e não coleta dados pessoais. Tudo o que você registra no app fica guardado apenas no seu aparelho e não é enviado a servidores do app. Se você quiser, pode guardar um backup na sua própria conta do Google Drive; nesse caso, o arquivo vai direto do seu aparelho para o seu Drive, e nós não temos acesso a ele.</p>
 
   <h2>Quais informações o app guarda</h2>
   <p>Para funcionar, o app guarda no próprio aparelho:</p>
@@ -58,7 +58,7 @@ footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2>O que não fazemos</h2>
   <ul>
     <li>Não pedimos nome, e-mail, telefone ou qualquer cadastro.</li>
-    <li>Não coletamos nem enviamos seus dados de leitura, anotações ou conexões para servidores.</li>
+    <li>Não coletamos nem enviamos seus dados de leitura, anotações ou conexões para servidores do app.</li>
     <li>Não usamos publicidade, ferramentas de análise (analytics) ou rastreamento.</li>
     <li>Não vendemos nem compartilhamos dados com terceiros.</li>
     <li>Não pedimos acesso a câmera, localização, contatos ou outras permissões do aparelho.</li>
@@ -67,8 +67,20 @@ footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
   <h2>Backup</h2>
   <p>O botão "Salvar backup" gera um arquivo no seu próprio aparelho, normalmente na pasta Downloads. Esse arquivo só sai do aparelho se você mesmo decidir enviá-lo ou copiá-lo para outro lugar. "Restaurar backup" lê um arquivo que você escolhe, sem enviar nada pela internet.</p>
 
+  <h2>Backup no Google Drive (opcional)</h2>
+  <p>Se você tocar em "Salvar no Drive" ou "Restaurar do Drive", o app pede sua autorização pelo login do Google para acessar o Google Drive. Funciona assim:</p>
+  <ul>
+    <li><strong>Permissão pedida:</strong> apenas "ver, editar, criar e excluir somente os arquivos do Google Drive que você usa com este app" (escopo <code>drive.file</code>). O app não consegue ver nem abrir nenhum outro arquivo do seu Drive.</li>
+    <li><strong>O que o app faz no Drive:</strong> cria uma pasta chamada "Leitura Bíblica" e, dentro dela, um único arquivo de backup (<code>backup-leitura-biblica.json</code>) com seu progresso, suas anotações e suas conexões. Cada novo backup substitui o conteúdo desse mesmo arquivo. Ao restaurar, o app lê esse arquivo.</li>
+    <li><strong>Seu e-mail:</strong> o app lê o endereço de e-mail da conta conectada apenas para mostrar, na tela de backup, em qual conta o arquivo está. Ele fica guardado somente no seu aparelho.</li>
+    <li><strong>Sem servidores do app:</strong> a comunicação acontece direto entre o seu aparelho e o Google, por conexão segura (HTTPS). O desenvolvedor do app não recebe, não vê e não guarda o seu backup, o seu e-mail nem a autorização de acesso.</li>
+    <li><strong>Autorização temporária:</strong> a autorização dada pelo Google vale por cerca de 1 hora e fica apenas na sessão do app no seu aparelho. Depois disso, o app pede o login de novo quando você usar o Drive.</li>
+  </ul>
+  <p>O uso e a transferência, para qualquer outro app, de informações recebidas das APIs do Google pelo Leitura Bíblica seguem a <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noopener">Política de Dados do Usuário dos Serviços de API do Google</a>, incluindo os requisitos de Uso Limitado. Os dados do Drive são usados só para salvar e restaurar o seu backup, não são usados para publicidade e não são vendidos nem compartilhados.</p>
+  <p>Para retirar a permissão, toque em "Desconectar conta Google" no app ou acesse <a href="https://myaccount.google.com/connections" rel="noopener">myaccount.google.com/connections</a> e remova o acesso do Leitura Bíblica. O arquivo de backup continua no seu Drive até você apagá-lo.</p>
+
   <h2>Conexões de internet</h2>
-  <p>O app funciona offline. A internet é usada apenas para baixar e atualizar os arquivos do próprio app, hospedados no GitHub Pages, e as fontes de texto, servidas pelo Google Fonts. Como acontece em qualquer site, esses serviços podem registrar dados técnicos de acesso, como endereço IP e tipo de navegador, de acordo com as políticas de privacidade deles:</p>
+  <p>O app funciona offline. A internet é usada apenas para baixar e atualizar os arquivos do próprio app, hospedados no GitHub Pages, para carregar as fontes de texto, servidas pelo Google Fonts, e, se você usar, para o backup no Google Drive descrito acima. Como acontece em qualquer site, esses serviços podem registrar dados técnicos de acesso, como endereço IP e tipo de navegador, de acordo com as políticas de privacidade deles:</p>
   <ul>
     <li><a href="https://docs.github.com/pt/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">Declaração de privacidade do GitHub</a></li>
     <li><a href="https://policies.google.com/privacy?hl=pt-BR" rel="noopener">Política de privacidade do Google</a></li>
@@ -76,7 +88,7 @@ footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line);
   <p>Nenhuma dessas conexões envia o seu progresso de leitura, suas anotações ou suas conexões.</p>
 
   <h2>Como apagar seus dados</h2>
-  <p>Como os dados ficam só no aparelho, você pode apagá-los a qualquer momento desinstalando o app ou limpando os dados dele nas configurações do Android (Configurações → Apps → Leitura Bíblica → Armazenamento → Limpar dados). Se ainda quiser guardar seu progresso, salve um backup antes.</p>
+  <p>Como os dados ficam só no aparelho, você pode apagá-los a qualquer momento desinstalando o app ou limpando os dados dele nas configurações do Android (Configurações → Apps → Leitura Bíblica → Armazenamento → Limpar dados). Se ainda quiser guardar seu progresso, salve um backup antes. O backup no Google Drive, se você tiver feito um, pode ser apagado pelo próprio Drive, na pasta "Leitura Bíblica".</p>
 
   <h2>Crianças</h2>
   <p>O app pode ser usado por pessoas de qualquer idade e não coleta dados de ninguém, inclusive de crianças.</p>

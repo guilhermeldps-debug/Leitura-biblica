@@ -50,9 +50,9 @@ O Leitura Bíblica é um diário de leitura simples e bonito para quem quer ler 
 
 🔒 PRIVADO E OFFLINE
 • Sem cadastro, sem anúncios e sem rastreamento.
-• Seu progresso, suas anotações e suas conexões ficam somente no seu celular.
+• Seu progresso, suas anotações e suas conexões ficam no seu celular, e não em servidores do app.
 • Funciona sem internet.
-• Salve um arquivo de backup e restaure quando trocar de aparelho.
+• Backup opcional no seu Google Drive, sempre no mesmo arquivo: cada backup substitui o anterior. Também dá para salvar um arquivo no celular.
 
 🌙 DO SEU JEITO
 • Tema claro, escuro ou automático.
@@ -148,7 +148,11 @@ Alternativa: usar um domínio próprio (ex.: `leiturabiblica.com.br`) no GitHub 
    - **Política de privacidade:** `https://guilhermeldps-debug.github.io/Leitura-biblica/privacidade.html`
    - **Anúncios:** não contém anúncios.
    - **Acesso ao app:** todo o app está disponível sem login.
-   - **Segurança dos dados:** o app **não coleta nem compartilha** dados de usuário; os dados ficam só no aparelho.
+   - **Segurança dos dados:** o progresso fica só no aparelho, e o app não envia nada a servidores próprios. O backup no Google Drive é opcional e vai direto do aparelho para o Drive do próprio usuário. Como esses dados saem do aparelho, a declaração mais segura é:
+     - **Coleta de dados: Sim** → **Atividade no app → Outros conteúdos gerados pelo usuário** (anotações e progresso de leitura). O e-mail da conta não precisa ser declarado: o app só o recebe do Google para mostrar na tela e não o envia a lugar nenhum.
+     - **Uso:** Funcionalidade do app. **Opcional** (só quem usa o backup no Drive).
+     - **Compartilhamento: Não** (a transferência para o Drive é iniciada pelo próprio usuário, para a conta dele).
+     - **Criptografia em trânsito: Sim** (HTTPS). **Exclusão:** o usuário apaga o arquivo no Drive ou remove o acesso em myaccount.google.com/connections.
    - **Classificação de conteúdo:** responda ao questionário (categoria Referência/Educação; nada de violência ou conteúdo sensível).
    - **Público-alvo:** escolher faixas a partir de 13 anos evita as exigências extras do programa para famílias. Inclua menores de 13 só se quiser esse público.
    - **App de notícias**, **Apps governamentais**, **Recursos financeiros**, **Saúde:** responda "não".

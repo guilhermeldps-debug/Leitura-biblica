@@ -148,11 +148,11 @@ Alternativa: usar um domínio próprio (ex.: `leiturabiblica.com.br`) no GitHub 
    - **Política de privacidade:** `https://guilhermeldps-debug.github.io/Leitura-biblica/privacidade.html`
    - **Anúncios:** não contém anúncios.
    - **Acesso ao app:** todo o app está disponível sem login.
-   - **Segurança dos dados:** o progresso fica só no aparelho, e o app não envia nada a servidores próprios. O backup no Google Drive é opcional e vai direto do aparelho para o Drive do próprio usuário. Como esses dados saem do aparelho, a declaração mais segura é:
-     - **Coleta de dados: Sim** → **Atividade no app → Outros conteúdos gerados pelo usuário** (anotações e progresso de leitura). O e-mail da conta não precisa ser declarado: o app só o recebe do Google para mostrar na tela e não o envia a lugar nenhum.
-     - **Uso:** Funcionalidade do app. **Opcional** (só quem usa o backup no Drive).
-     - **Compartilhamento: Não** (a transferência para o Drive é iniciada pelo próprio usuário, para a conta dele).
-     - **Criptografia em trânsito: Sim** (HTTPS). **Exclusão:** o usuário apaga o arquivo no Drive ou remove o acesso em myaccount.google.com/connections.
+   - **Segurança dos dados:** responda **"Não, o app não coleta nem compartilha dados do usuário"**.
+     - O progresso fica só no aparelho, e o app não tem servidor próprio.
+     - O backup no Google Drive vai direto do aparelho para a conta do próprio usuário, sob os termos do Google. Segundo as perguntas frequentes do Google sobre a seção Segurança dos dados, uploads diretos para o Drive ou serviços parecidos não precisam ser declarados como coleta quando o app (o desenvolvedor) nunca recebe nem acessa esses dados, que é o caso aqui.
+     - O e-mail da conta só é recebido do Google para aparecer na tela e não sai do aparelho.
+     - Se o Google questionar na análise, a alternativa é declarar **Atividade no app → Outros conteúdos gerados pelo usuário**, como coleta **opcional**, para **funcionalidade do app**, **sem compartilhamento**, **criptografada em trânsito**.
    - **Classificação de conteúdo:** responda ao questionário (categoria Referência/Educação; nada de violência ou conteúdo sensível).
    - **Público-alvo:** escolher faixas a partir de 13 anos evita as exigências extras do programa para famílias. Inclua menores de 13 só se quiser esse público.
    - **App de notícias**, **Apps governamentais**, **Recursos financeiros**, **Saúde:** responda "não".

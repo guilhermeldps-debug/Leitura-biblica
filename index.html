@@ -176,6 +176,9 @@ header { display: grid; gap: 6px; }
 @media (prefers-reduced-motion: reduce) { .savebar.warn { animation: none; } }
 .next-confirm { display: flex; gap: 8px; }
 .plink { color: var(--muted); }
+.help-top { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); border-radius: 999px; padding: 6px 14px 6px 10px; font-size: .82rem; font-weight: 700; text-decoration: none; }
+.help-top .ic { width: 18px; height: 18px; }
+.help-top:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .notes { display: grid; gap: 0; }
 .notes h4 { margin: 0; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 6px 0; }
 .note-item { display: grid; gap: 3px; text-align: left; width: 100%; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 10px 2px; }
@@ -212,6 +215,7 @@ header { display: grid; gap: 6px; }
         <button type="button" data-t="light" id="thLight">Claro</button>
         <button type="button" data-t="dark" id="thDark">Escuro</button>
       </div>
+      <a class="help-top" href="ajuda.html"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M9.4 9.2a2.7 2.7 0 0 1 5.2 1c0 1.8-2.6 2.3-2.6 3.8 M12 17.2v.1"/></svg><span>Como usar</span></a>
     </div>
     <h1>Diário de Leitura Bíblica</h1>
     <div class="status" id="status">Progresso salvo neste celular</div>
@@ -286,7 +290,7 @@ header { display: grid; gap: 6px; }
       <button class="btn ghost" id="impBtn" type="button">Restaurar backup</button>
       <input type="file" id="impFile" accept="application/json,.json" hidden>
     </div>
-    <p class="hint"><a href="privacidade.html" class="plink">Política de privacidade</a></p>
+    <p class="hint"><a href="ajuda.html" class="plink">Como usar</a> · <a href="privacidade.html" class="plink">Política de privacidade</a></p>
   </section>
 </div>
 

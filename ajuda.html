@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#23407a">
+<title>Como usar · Leitura Bíblica</title>
+<meta name="description" content="Como instalar e usar o Leitura Bíblica: marcar capítulos, anotar, ligar passagens e fazer backup.">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/favicon-48.png">
+<link rel="manifest" href="manifest.json">
+<script>try{var t=localStorage.getItem("leitura-biblica-tema");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t;}catch(e){}</script>
+<style>
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --ink: #1b2233; --muted: #626b7d; --line: #dde1e8;
+  --accent: #23407a; --accent-soft: #e3e9f5; --gilt: #b08a2e;
+  --k-pro: #a8741a; --k-par: #2f5fb3; --k-cit: #2e7d4f; --k-tem: #8a3f8f;
+  --display: "EB Garamond", Georgia, "Times New Roman", serif;
+  --body: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242; --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a;
+  --k-pro: #e0b45c; --k-par: #8fb0f0; --k-cit: #6fc495; --k-tem: #d38fd8; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11141b; --surface: #1a1f2a; --ink: #e8ebf2; --muted: #9aa3b5; --line: #2b3242; --accent: #9fb6ea; --accent-soft: #24304a; --gilt: #d6b25a;
+  --k-pro: #e0b45c; --k-par: #8fb0f0; --k-cit: #6fc495; --k-tem: #d38fd8; color-scheme: dark }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+main { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 64px; }
+.back { display: inline-block; color: var(--accent); font-weight: 600; text-decoration: none; margin-bottom: 20px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.eyebrow { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gilt); font-weight: 700; margin: 0; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 2.1rem; line-height: 1.15; margin: 4px 0 6px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 1.4rem; margin: 34px 0 8px; text-wrap: balance; }
+h3 { font-size: 1rem; margin: 0; }
+.lead { color: var(--muted); margin: 0 0 18px; }
+p, li { max-width: 65ch; }
+ul, ol { padding-left: 1.25em; margin: 8px 0; }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+strong { font-weight: 700; }
+.site { display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gilt); border-radius: 10px; padding: 14px 16px; }
+.site p { margin: 0; }
+.site a.url { font-weight: 700; overflow-wrap: anywhere; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn { font: inherit; background: var(--accent); color: var(--bg); border: 0; border-radius: 999px; padding: 9px 18px; font-weight: 700; font-size: .9rem; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.msg { font-size: .85rem; color: var(--muted); margin: 0; }
+.msg:empty { display: none; }
+.installed { display: flex; gap: 10px; align-items: center; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; margin: 0 0 12px; }
+.cards { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.card.mine { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.badge { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--bg); background: var(--accent); border-radius: 999px; padding: 2px 10px; }
+.card ol { margin-bottom: 0; }
+.key { display: inline-block; border: 1px solid var(--line); background: var(--bg); border-radius: 6px; padding: 0 6px; font-size: .9em; font-weight: 600; white-space: nowrap; }
+.kinds { list-style: none; padding: 0; display: grid; gap: 6px; }
+.kinds li { display: flex; align-items: center; gap: 10px; margin: 0; }
+.kinds i { width: 22px; height: 5px; border-radius: 3px; background: var(--kc); flex: none; }
+.note { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; color: var(--muted); font-size: .92rem; }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; display: flex; gap: 6px 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← Voltar ao app</a>
+  <p class="eyebrow">Leitura Bíblica</p>
+  <h1>Como usar</h1>
+  <p class="lead">Diário de leitura bíblica para marcar os capítulos lidos, anotar e ligar passagens. Funciona offline, sem cadastro e sem anúncios.</p>
+
+  <div class="site">
+    <p>🌐 <strong>Site do app:</strong> <a class="url" href="https://guilhermeldps-debug.github.io/Leitura-biblica/">https://guilhermeldps-debug.github.io/Leitura-biblica/</a></p>
+    <div class="row">
+      <button class="btn ghost" id="copyLink" type="button">Copiar link</button>
+    </div>
+    <p class="msg" id="copyMsg" role="status" aria-live="polite"></p>
+  </div>
+
+  <h2 id="instalar">Como instalar</h2>
+  <p class="installed" id="installedNote" hidden>✓ Você já está usando o app instalado. As instruções abaixo servem para instalar em outro aparelho.</p>
+  <div class="row" id="installRow" hidden>
+    <button class="btn" id="installBtn" type="button">Instalar app agora</button>
+  </div>
+  <div class="cards" id="cards">
+    <section class="card" data-os="android">
+      <div class="card-head"><h3>Android</h3><span class="badge" hidden>Seu aparelho</span></div>
+      <ol>
+        <li>Abra o site do app no <strong>Chrome</strong>.</li>
+        <li>Toque no menu <span class="key">⋮</span> no canto superior direito.</li>
+        <li>Toque em <strong>Instalar app</strong> (ou <strong>Adicionar à tela inicial</strong>) e confirme.</li>
+      </ol>
+    </section>
+    <section class="card" data-os="ios">
+      <div class="card-head"><h3>iPhone e iPad</h3><span class="badge" hidden>Seu aparelho</span></div>
+      <ol>
+        <li>Abra o site do app no <strong>Safari</strong>.</li>
+        <li>Toque em <strong>Compartilhar</strong> (o quadrado com a seta para cima).</li>
+        <li>Toque em <strong>Adicionar à Tela de Início</strong> e depois em <strong>Adicionar</strong>.</li>
+      </ol>
+    </section>
+    <section class="card" data-os="desktop">
+      <div class="card-head"><h3>Computador</h3><span class="badge" hidden>Seu aparelho</span></div>
+      <ol>
+        <li>Abra o site do app no <strong>Chrome</strong> ou no <strong>Edge</strong>.</li>
+        <li>Clique no ícone de instalar, no lado direito da barra de endereço.</li>
+        <li>Clique em <strong>Instalar</strong>.</li>
+      </ol>
+    </section>
+  </div>
+
+  <h2>Marcar a leitura</h2>
+  <ul>
+    <li>Os 66 livros estão nas abas <strong>Antigo Testamento</strong> e <strong>Novo Testamento</strong>, agrupados por seção. Ao abrir um livro, aparece um resumo do assunto dele.</li>
+    <li>Toque nos capítulos que você leu e depois em <strong>Salvar</strong>. Nada muda sem você salvar: capítulos pendentes ficam com borda dourada tracejada, e os que vão ser desmarcados aparecem riscados.</li>
+    <li>Use <strong>Marcar livro inteiro</strong> ou <strong>Desmarcar tudo</strong> para mudar o livro todo de uma vez, também confirmando em <strong>Salvar</strong>.</li>
+    <li>No painel, o botão <strong>Próximo capítulo</strong> mostra onde você parou. Toque em <strong>Marcar como lido</strong> e confirme em <strong>Salvar</strong>.</li>
+    <li>Acima da lista, escolha a ordem <strong>Bíblica</strong> ou <strong>Cronológica</strong>. Na cronológica, os livros ficam agrupados por época, e o próximo capítulo segue essa ordem.</li>
+  </ul>
+
+  <h2>Acompanhar o progresso</h2>
+  <ul>
+    <li>No topo aparecem os <strong>livros concluídos</strong> e os <strong>capítulos lidos</strong>, no total e por Testamento.</li>
+    <li>Logo abaixo: capítulos lidos hoje, dias seguidos de leitura e livros em andamento.</li>
+    <li>O mapa mostra as últimas 16 semanas. Quanto mais escuro o quadrinho, mais capítulos você leu naquele dia.</li>
+  </ul>
+
+  <h2>Anotações e conexões</h2>
+  <ul>
+    <li>Dentro de um livro, toque em <strong>Anotar</strong> e escolha o capítulo. Escreva no campo que aparece: a anotação é salva sozinha. Capítulos anotados ganham um ponto dourado.</li>
+    <li>Na mesma tela, toque em <strong>+ Nova conexão</strong> para ligar o capítulo a outra passagem. Informe o livro, o capítulo e, se quiser, os versículos, escolha o tipo e salve. A conexão aparece como uma faixa colorida nos dois capítulos:</li>
+  </ul>
+  <ul class="kinds">
+    <li style="--kc: var(--k-pro)"><i></i>Profecia e cumprimento</li>
+    <li style="--kc: var(--k-par)"><i></i>Texto paralelo</li>
+    <li style="--kc: var(--k-cit)"><i></i>Citação</li>
+    <li style="--kc: var(--k-tem)"><i></i>Mesmo tema</li>
+  </ul>
+  <ul>
+    <li>Toque numa conexão para ir até a outra passagem. Use <strong>Editar</strong> ou <strong>Remover</strong> para alterá-la.</li>
+    <li>A aba <strong>Anotações</strong> reúne todas as anotações e conexões, com busca.</li>
+  </ul>
+
+  <h2>Backup</h2>
+  <p>Seu progresso fica guardado neste aparelho. Faça backup de vez em quando para não perder nada se trocar de celular ou limpar os dados do app. A seção <strong>Backup</strong> fica no fim da tela inicial.</p>
+  <ul>
+    <li><strong>Salvar no Drive:</strong> guarda uma cópia na sua conta Google, sempre no mesmo arquivo (<em>backup-leitura-biblica.json</em>, na pasta "Leitura Bíblica"). Cada backup substitui o anterior. Na primeira vez, o Google pede que você escolha a conta e autorize.</li>
+    <li><strong>Restaurar do Drive:</strong> mostra um resumo do backup e só substitui o progresso do aparelho depois da sua confirmação. Use no celular novo, com a mesma conta Google.</li>
+    <li><strong>Salvar backup / Restaurar backup:</strong> fazem o mesmo com um arquivo guardado no próprio aparelho, normalmente na pasta Downloads.</li>
+  </ul>
+
+  <h2>Aparência</h2>
+  <ul>
+    <li>No topo da tela inicial, escolha o tema <strong>Automático</strong> (segue o aparelho), <strong>Claro</strong> ou <strong>Escuro</strong>.</li>
+  </ul>
+
+  <p class="note">O app não traz o texto bíblico. Use-o junto com a sua Bíblia preferida, impressa ou digital.</p>
+
+  <footer>
+    <a href="./">Voltar ao app</a>
+    <a href="privacidade.html">Política de privacidade</a>
+    <a href="https://github.com/guilhermeldps-debug/Leitura-biblica/issues" rel="noopener">Sugestões e problemas</a>
+  </footer>
+</main>
+<script>
+(() => {
+  const URL_APP = "https://guilhermeldps-debug.github.io/Leitura-biblica/";
+  // destaca o aparelho atual e coloca o cartão dele primeiro
+  const ua = navigator.userAgent;
+  const os = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "desktop";
+  const mine = document.querySelector(`.card[data-os="${os}"]`);
+  if (mine) { mine.classList.add("mine"); mine.querySelector(".badge").hidden = false; document.getElementById("cards").prepend(mine); }
+  // já está instalado?
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true || document.referrer.startsWith("android-app://");
+  if (standalone) document.getElementById("installedNote").hidden = false;
+  // botão de instalação direta, quando o navegador oferece
+  let deferred = null;
+  addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferred = e; if (!standalone) document.getElementById("installRow").hidden = false; });
+  document.getElementById("installBtn").onclick = async () => {
+    if (!deferred) return;
+    deferred.prompt();
+    try { await deferred.userChoice; } catch (e) {}
+    deferred = null; document.getElementById("installRow").hidden = true;
+  };
+  addEventListener("appinstalled", () => { document.getElementById("installRow").hidden = true; document.getElementById("installedNote").hidden = false; });
+  // copiar o link do site
+  document.getElementById("copyLink").onclick = async () => {
+    const msg = document.getElementById("copyMsg");
+    try { await navigator.clipboard.writeText(URL_APP); msg.textContent = "Link copiado. Cole numa mensagem para enviar."; }
+    catch (e) {
+      const a = document.querySelector(".site a.url"), r = document.createRange(); r.selectNodeContents(a);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+      msg.textContent = "Não foi possível copiar automaticamente. O link está selecionado: copie pelo menu do aparelho.";
+    }
+  };
+})();
+</script>
+</body>
+</html>

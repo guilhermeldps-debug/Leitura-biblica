@@ -64,6 +64,8 @@
 | **iPhone** | Abra no Safari → Compartilhar → **Adicionar à Tela de Início**. |
 | **Computador** | Abra no Chrome ou no Edge e clique no ícone de instalar na barra de endereço. |
 
+Esse passo a passo também está dentro do app, no botão **Como usar** no topo da tela inicial.
+
 A versão para a Google Play Store está em preparação. Veja [`PLAYSTORE.md`](PLAYSTORE.md).
 
 ## Privacidade
@@ -83,6 +85,7 @@ Detalhes na [política de privacidade](https://guilhermeldps-debug.github.io/Lei
 ├── sw.js                   Service worker: cache offline do app e das fontes
 ├── manifest.json           Manifesto do PWA (nome, cores, ícones, capturas)
 ├── privacidade.html        Política de privacidade
+├── ajuda.html              Página "Como usar" dentro do app
 ├── icons/                  Ícones do app (normal e maskable)
 ├── screenshots/            Capturas usadas no manifesto e na loja
 ├── loja/                   Imagens da ficha da Play Store

@@ -2,13 +2,14 @@
    Guarda os arquivos do app para uso offline. Não mexe no progresso:
    marcações, anotações e conexões ficam no localStorage do aparelho,
    que o service worker não lê nem apaga. */
-const VERSION = "v18";
+const VERSION = "v19";
 const APP_CACHE = "leitura-biblica-app-" + VERSION;
 const FONT_CACHE = "leitura-biblica-fontes";
 const APP_FILES = [
   "./",
   "index.html",
   "privacidade.html",
+  "ajuda.html",
   "manifest.json",
   "icons/icon-192.png",
   "icons/icon-512.png",

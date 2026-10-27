@@ -59,6 +59,11 @@ strong { font-weight: 700; }
 .kinds li { display: flex; align-items: center; gap: 10px; margin: 0; }
 .kinds i { width: 22px; height: 5px; border-radius: 3px; background: var(--kc); flex: none; }
 .note { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; color: var(--muted); font-size: .92rem; }
+@media (min-width: 1000px) {
+  main { max-width: 980px; padding-block: 40px 72px; }
+  .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+  .lead, .site { max-width: 760px; }
+}
 footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: .85rem; display: flex; gap: 6px 16px; flex-wrap: wrap; }
 </style>
 </head>

@@ -49,6 +49,7 @@
 **Do seu jeito**
 - Tema automático, claro ou escuro.
 - Instalável no celular (PWA) e funciona sem internet.
+- No computador, aproveita a tela larga: progresso numa coluna fixa à esquerda, livros em várias colunas e o livro aberto numa janela no centro.
 
 **Backup**
 - **Google Drive** (opcional): salva sempre no mesmo arquivo, `backup-leitura-biblica.json`, na pasta "Leitura Bíblica" do seu Drive. Cada backup substitui o anterior, e a restauração mostra um resumo antes de substituir o progresso.

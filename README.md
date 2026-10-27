@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  🌐 <strong>Site:</strong> <a href="https://guilhermeldps-debug.github.io/Leitura-biblica/">https://guilhermeldps-debug.github.io/Leitura-biblica/</a>
+</p>
+
+<p align="center">
   <a href="https://guilhermeldps-debug.github.io/Leitura-biblica/"><strong>Abrir o app</strong></a>
   ·
   <a href="https://guilhermeldps-debug.github.io/Leitura-biblica/privacidade.html">Política de privacidade</a>
